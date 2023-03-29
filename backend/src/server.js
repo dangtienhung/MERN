@@ -1,5 +1,6 @@
 import * as dotenv from 'dotenv';
 
+import cors from 'cors';
 import express from 'express';
 import { fileURLToPath } from 'url';
 import imageRouter from './routers/file.js';
@@ -17,6 +18,7 @@ dotenv.config();
 const app = express();
 app.use(morgan('combined'));
 app.use(express.json());
+app.use(cors());
 
 /* port */
 const port = process.env.PORT || 3000;
