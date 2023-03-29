@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 
 import type { ColumnsType } from 'antd/es/table';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 interface DataSource {
   _id: string;
@@ -77,10 +78,22 @@ const ProductManager: React.FC = () => {
   /* handleDelete */
   const handleDelete = async (id: string) => {
     try {
-      const response = await axios.delete(`http://localhost:8080/api/products/${id}`, {
-        headers: {},
-      });
-      console.log('🚀 ~ file: ProductManager.tsx:75 ~ handleDelete ~ response:', response);
+      const token: string | null = localStorage.getItem('token');
+      if (token) {
+        const parseToken = JSON.parse(token);
+        const response = await axios.delete(`http://localhost:8080/api/products/${id}`, {
+          headers: {
+            Authorization: `Bearer ${parseToken}`,
+          },
+        });
+        if (response.status === 200) {
+          const productNew = products.filter((product: DataSource) => product._id !== id);
+          setProducts(productNew);
+          toast.success(response.data.message);
+        }
+      } else {
+        toast.error('Invalid token');
+      }
     } catch (error) {
       console.log(error);
     }

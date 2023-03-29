@@ -1,12 +1,12 @@
 import { Route, Routes } from 'react-router-dom';
 
 import LayoutDefault from '../layouts/LayoutDefault';
+import Login from '../views/login/Login';
 import ProductManager from '../views/products/ProductManager';
 import ProductPreview from '../views/products/ProductPreview';
 import Sidebars from '../components/Sidebars/Sidebars';
 
 const routerLinks = [
-  { key: '/', component: <ProductManager /> },
   { key: '/admin/products', component: <ProductManager /> },
   { key: '/admin/product/add', component: <Sidebars /> },
   { key: '/admin/product/edit/:id', component: <Sidebars /> },
@@ -19,12 +19,13 @@ const routerLinks = [
 const Routers = () => {
   return (
     <Routes>
+      <Route path="/" element={<Login />} />
       <Route element={<LayoutDefault />}>
         {routerLinks.map((item) => (
           <Route path={item.key} element={item.component} key={item.key} />
         ))}
-        <Route path="*" element={'not found 404'} />
       </Route>
+      <Route path="*" element={'not found 404'} />
     </Routes>
   );
 };
