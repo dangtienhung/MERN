@@ -1,5 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 
+import LayoutAdmin from '../layouts/admin';
 import LayoutDefault from '../layouts/LayoutDefault';
 import Login from '../views/login/Login';
 import ProductManager from '../views/products/ProductManager';
@@ -19,6 +20,7 @@ const routerLinks = [
 const Routers = () => {
   return (
     <Routes>
+      <Route path="/admin/dashboard" element={<LayoutAdmin />} />
       <Route path="/" element={<Login />} />
       <Route element={<LayoutDefault />}>
         {routerLinks.map((item) => (
