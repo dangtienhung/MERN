@@ -1,33 +1,45 @@
 import { Route, Routes } from 'react-router-dom';
 
+import Home from '../pages/home';
 import LayoutAdmin from '../layouts/admin';
-import LayoutDefault from '../layouts/LayoutDefault';
-import Login from '../views/login/Login';
-import ProductManager from '../views/products/ProductManager';
-import ProductPreview from '../views/products/ProductPreview';
-import Sidebars from '../components/Sidebars/Sidebars';
+import LayoutDefault from '../layouts/client';
+
+// import HomeComponent from '../views';
 
 const routerLinks = [
-  { key: '/admin/products', component: <ProductManager /> },
-  { key: '/admin/product/add', component: <Sidebars /> },
-  { key: '/admin/product/edit/:id', component: <Sidebars /> },
-  { key: '/admin/product/preview/:id', component: <ProductPreview /> },
-  { key: '/admin/users', component: <Sidebars /> },
-  { key: '/admin/user/add', component: <Sidebars /> },
-  { key: '/admin/user/edit', component: <Sidebars /> },
+  {
+    path: '/',
+    element: <LayoutDefault />,
+    children: [
+      { path: '/', element: <Home /> },
+      { path: '/:id', element: 'home details' },
+    ],
+  },
+  {
+    path: '/admin',
+    element: <LayoutAdmin />,
+    chilren: [
+      { path: '/dashboard', element: 'dashboard' },
+      { path: '/mobile', element: 'mobile phone' },
+      { path: '/mobile/add', element: 'mobile phone add' },
+      { path: '/mobile/edit/:id', element: 'mobile phone edit' },
+    ],
+  },
+  { path: '*', element: 'not found 404' },
 ];
 
 const Routers = () => {
   return (
     <Routes>
-      <Route path="/admin/dashboard" element={<LayoutAdmin />} />
-      <Route path="/" element={<Login />} />
-      <Route element={<LayoutDefault />}>
-        {routerLinks.map((item) => (
-          <Route path={item.key} element={item.component} key={item.key} />
-        ))}
-      </Route>
-      <Route path="*" element={'not found 404'} />
+      {routerLinks.map((link, index) => (
+        <Route key={index} path={link.path} element={link.element}>
+          {link.children &&
+            link.children.length > 0 &&
+            link.children.map((child, index) => (
+              <Route key={index} path={child.path} element={child.element} />
+            ))}
+        </Route>
+      ))}
     </Routes>
   );
 };
