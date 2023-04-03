@@ -1,8 +1,11 @@
 import { Button, Col, Form, Image, Input, Row } from 'antd';
+import { Link, useNavigate } from 'react-router-dom';
 
 import type { FormItemProps } from 'antd';
-import { Link } from 'react-router-dom';
+import { IUserInfo } from '../../interfaces/UserInfo';
 import React from 'react';
+import { login } from '../../api/users';
+import { toast } from 'react-toastify';
 
 const MyFormItemContext = React.createContext<(string | number)[]>([]);
 
@@ -16,33 +19,24 @@ const MyFormItem = ({ name, ...props }: FormItemProps) => {
   return <Form.Item name={concatName} {...props} />;
 };
 
-interface IUser {
-  username: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
-
 const LoginPage = () => {
-  const onFinish = (value: IUser) => {
-    console.log(value);
+  const navigate = useNavigate();
+  const onFinish = async (value: IUserInfo) => {
+    try {
+      const response = await login(value);
+      if (response && response.data) {
+        toast.success(response.data.message);
+        localStorage.setItem('token', JSON.stringify(response.data.data.acessToken));
+        navigate('/');
+      }
+    } catch (error) {
+      toast.error('Register failed');
+    }
   };
   return (
     <Row className="w-[800px]">
       <Col span={16}>
-        <Form name="form_item_path" layout="vertical" onFinish={onFinish}>
-          <MyFormItem
-            name="username"
-            label="Username"
-            rules={[
-              {
-                message: 'Please input your username!',
-                required: true,
-              },
-            ]}
-          >
-            <Input placeholder="Enter your username" />
-          </MyFormItem>
+        <Form name="form_item_path" layout="vertical" onFinish={onFinish} autoComplete="off">
           <MyFormItem
             name="email"
             label="Email"
@@ -67,18 +61,6 @@ const LoginPage = () => {
           >
             <Input placeholder="Enter your password" />
           </MyFormItem>
-          <MyFormItem
-            name="confirmPassword"
-            label="Confirm Password"
-            rules={[
-              {
-                message: 'Please input your confirm password!',
-                required: true,
-              },
-            ]}
-          >
-            <Input placeholder="Enter your password" />
-          </MyFormItem>
           <Button
             type="primary"
             htmlType="submit"
@@ -86,6 +68,12 @@ const LoginPage = () => {
           >
             Submit
           </Button>
+          <Col span={24} className="mt-5">
+            Bạn không có tài khoản?
+            <Link to="/register" className="text-primary">
+              đăng ký
+            </Link>
+          </Col>
         </Form>
       </Col>
       <Col span={8} className="flex justify-center items-center">

@@ -1,39 +1,42 @@
 import mongoose from 'mongoose';
 
 /* images */
-const imageSchema = new mongoose.Schema({
-	base_url: {
-		type: String,
-		required: true,
+const imageSchema = new mongoose.Schema(
+	{
+		base_url: {
+			type: String,
+			required: true,
+		},
+		is_gallery: {
+			type: Boolean,
+		},
+		label: {
+			type: String,
+			default: null,
+		},
+		large_url: {
+			type: String,
+			required: true,
+		},
+		medium_url: {
+			type: String,
+			required: true,
+		},
+		position: {
+			type: String,
+			default: null,
+		},
+		small_url: {
+			type: String,
+			required: true,
+		},
+		thumbnail_url: {
+			type: String,
+			required: true,
+		},
 	},
-	is_gallery: {
-		type: Boolean,
-	},
-	label: {
-		type: String,
-		default: null,
-	},
-	large_url: {
-		type: String,
-		required: true,
-	},
-	medium_url: {
-		type: String,
-		required: true,
-	},
-	position: {
-		type: String,
-		default: null,
-	},
-	small_url: {
-		type: String,
-		required: true,
-	},
-	thumbnail_url: {
-		type: String,
-		required: true,
-	},
-});
+	{ timestamps: true, versionKey: false }
+);
 
 /* brand */
 const branchSchema = new mongoose.Schema({

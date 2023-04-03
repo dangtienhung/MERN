@@ -1,5 +1,6 @@
 import { Breadcrumb, Layout, theme } from 'antd';
 
+import { Outlet } from 'react-router-dom';
 import React from 'react';
 
 const MainLayout = () => {
@@ -20,7 +21,7 @@ const MainLayout = () => {
           background: colorBgContainer,
         }}
       >
-        Content
+        <Outlet />
       </Layout.Content>
     </Layout>
   );

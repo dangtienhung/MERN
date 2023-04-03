@@ -1,11 +1,14 @@
 import { Route, Routes } from 'react-router-dom';
 
+import Dashboard from '../pages/admin/dashboard';
 import Details from '../pages/details/Details';
 import Home from '../pages/home';
 import LayoutAdmin from '../layouts/admin';
 import LayoutDefault from '../layouts/client';
 import LayoutLogin from '../layouts/client/LayoutLogin';
+import LoginAdmin from '../pages/login/LoginAdmin';
 import LoginPage from '../pages/login';
+import Products from '../pages/admin/products';
 import RegisterPage from '../pages/Register';
 
 const routerLinks = [
@@ -14,10 +17,10 @@ const routerLinks = [
     children: [
       { path: '/login', element: <LoginPage /> },
       { path: '/register', element: <RegisterPage /> },
+      { path: '/admin/login', element: <LoginAdmin /> },
     ],
   },
   {
-    path: '/',
     element: <LayoutDefault />,
     children: [
       { path: '/', element: <Home /> },
@@ -25,13 +28,12 @@ const routerLinks = [
     ],
   },
   {
-    path: '/admin',
     element: <LayoutAdmin />,
-    chilren: [
-      { path: '/dashboard', element: 'dashboard' },
-      { path: '/mobile', element: 'mobile phone' },
-      { path: '/mobile/add', element: 'mobile phone add' },
-      { path: '/mobile/edit/:id', element: 'mobile phone edit' },
+    children: [
+      { path: '/admin/dashboard', element: <Dashboard /> },
+      { path: '/admin/mobile', element: 'mobile phone' },
+      { path: '/admin/mobile/add', element: <Products /> },
+      { path: '/admin/mobile/edit/:id', element: 'mobile phone edit' },
     ],
   },
   { path: '*', element: 'not found 404' },

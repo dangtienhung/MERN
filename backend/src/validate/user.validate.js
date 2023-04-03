@@ -21,10 +21,14 @@ export const userValidatorRegister = joi.object({
 		'any.required': 'Please enter password confirm required',
 		'any.only': 'Password does not match',
 	}),
-	role: joi.boolean().valid('admin', 'customer').default('customer').messages({
-		'boolean.base': 'Please enter a boolean',
-		'any.only': 'Please enter a valid role',
-	}),
+	role: joi
+		.string()
+		.valid('admin', 'super_admin', 'customer')
+		.default('customer')
+		.messages({
+			'string.empty': 'Please enter a role',
+			'any.required': 'Please enter any required',
+		}),
 });
 
 export const userValidatorLogin = joi.object({
