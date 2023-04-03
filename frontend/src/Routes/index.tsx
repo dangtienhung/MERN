@@ -4,10 +4,18 @@ import Details from '../pages/details/Details';
 import Home from '../pages/home';
 import LayoutAdmin from '../layouts/admin';
 import LayoutDefault from '../layouts/client';
-
-// import HomeComponent from '../views';
+import LayoutLogin from '../layouts/client/LayoutLogin';
+import LoginPage from '../pages/login';
+import RegisterPage from '../pages/Register';
 
 const routerLinks = [
+  {
+    element: <LayoutLogin />,
+    children: [
+      { path: '/login', element: <LoginPage /> },
+      { path: '/register', element: <RegisterPage /> },
+    ],
+  },
   {
     path: '/',
     element: <LayoutDefault />,
