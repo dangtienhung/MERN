@@ -1,0 +1,88 @@
+$slick-font-path: 'https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/fonts/' !default;
+$slick-font-family: 'slick' !default;
+$slick-loader-path: 'https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/' !default;
+
+@function slick-image-url($url) {
+  @if function-exists(image-url) {
+    @return image-url($url);
+  } @else {
+    @return url($slick-loader-path + $url);
+  }
+}
+
+@function slick-font-url($url) {
+  @if function-exists(font-url) {
+    @return font-url($url);
+  } @else {
+    @return url($slick-font-path + $url);
+  }
+}
+
+/* Slider */
+.slick-list {
+  .slick-loading & {
+    background: #fff slick-image-url('ajax-loader.gif') center center no-repeat;
+  }
+}
+
+/* Icons */
+@if $slick-font-family == 'slick' {
+  @font-face {
+    font-family: 'slick';
+    src: slick-font-url('slick.eot');
+    src: slick-font-url('slick.eot?#iefix') format('embedded-opentype'),
+      slick-font-url('slick.woff') format('woff'), slick-font-url('slick.ttf') format('truetype'),
+      slick-font-url('slick.svg#slick') format('svg');
+    font-weight: normal;
+    font-style: normal;
+  }
+}
+/* ************************************************************* */
+
+.js .cSlider--single {
+  & > div:nth-child(1n + 2) {
+    display: none;
+  }
+
+  &.slick-initialized > div:nth-child(1n + 2) {
+    display: block;
+  }
+}
+
+h2 {
+  position: relative;
+  font-size: 2.25rem;
+  background-color: #f0f0f0;
+  color: #3498db;
+  text-align: center;
+  padding: 2%;
+  margin: 0.5rem;
+
+  .cSlider--single & {
+    line-height: 10rem;
+  }
+
+  .cSlider--nav &::before {
+    content: '';
+    display: block;
+    padding-top: 75%;
+  }
+
+  .slick-slide.is-active & {
+    color: #c00;
+    background-color: #fff;
+  }
+}
+
+.cSlider--nav {
+  .slick-slide {
+    cursor: pointer;
+  }
+
+  span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}

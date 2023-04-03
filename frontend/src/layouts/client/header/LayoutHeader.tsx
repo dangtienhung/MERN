@@ -4,8 +4,8 @@ import {
   SearchOutlined,
   ShoppingCartOutlined,
 } from '@ant-design/icons';
+import { Badge, Input } from 'antd';
 
-import { Input } from 'antd';
 import { Link } from 'react-router-dom';
 
 const LayoutHeader = () => {
@@ -41,9 +41,11 @@ const LayoutHeader = () => {
           </div>
         </div>
         <div className="flex items-center gap-x-3">
-          <p>
-            <ShoppingCartOutlined style={{ fontSize: '24px', color: '#fff' }} />
-          </p>
+          <Badge count={5}>
+            <p>
+              <ShoppingCartOutlined style={{ fontSize: '24px', color: '#fff' }} />
+            </p>
+          </Badge>
           <div>
             <p>Giỏ</p>
             <p>hàng</p>

@@ -1,3 +1,5 @@
+import './style.scss';
+
 import { Card, Carousel, Col, Image, Pagination, PaginationProps, Row, Typography } from 'antd';
 
 import { Link } from 'react-router-dom';
@@ -7,23 +9,7 @@ import { useState } from 'react';
 const contentStyle: React.CSSProperties = {
   height: '460px',
   width: '100%',
-  objectFit: 'cover',
 };
-
-const linkImages = [
-  {
-    id: 1,
-    image: '/image 1.png',
-  },
-  {
-    id: 2,
-    image: '/image 2.png',
-  },
-  {
-    id: 3,
-    image: '/Rectangle (1).png',
-  },
-];
 
 const HomeComponent: React.FC = () => {
   const [data] = useState(Array(13).fill(null));
@@ -36,19 +22,27 @@ const HomeComponent: React.FC = () => {
   const visibleData = data.slice(startIndex, startIndex + pageSize);
   return (
     <>
-      <Row className="mt-5">
-        <Col>
-          <Carousel autoplay dots={false}>
-            {linkImages.map((item) => (
-              <div key={item.id}>
-                <div style={contentStyle}>
-                  <Image src={item.image} alt="" preview={false} />
-                </div>
-              </div>
-            ))}
-          </Carousel>
-        </Col>
-      </Row>
+      <div className="mt-8">
+        <Carousel autoplay effect="scrollx" dots={false}>
+          <div style={contentStyle}>
+            <Image
+              src="https://cdn2.cellphones.com.vn/690x300,webp,q100/https://dashboard.cellphones.com.vn/storage/redmi-note12-pre-sliding-0034.png"
+              className="w-full h-full object-cover rounded"
+              alt="ahihh"
+              preview={false}
+            />
+          </div>
+
+          <div style={contentStyle}>
+            <Image
+              src="https://cdn2.cellphones.com.vn/690x300,webp,q100/https://dashboard.cellphones.com.vn/storage/oppo-flip-pre-order-sliding-new.png"
+              className="w-full h-full object-cover"
+              alt="ahihh"
+              preview={false}
+            />
+          </div>
+        </Carousel>
+      </div>
       <Row className="mt-5">
         <Col span={24}>
           <Typography.Title level={4}>ĐIỆN THOẠI NỔI BẬT NHẤT</Typography.Title>

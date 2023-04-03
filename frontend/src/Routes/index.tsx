@@ -1,5 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 
+import Details from '../pages/details/Details';
 import Home from '../pages/home';
 import LayoutAdmin from '../layouts/admin';
 import LayoutDefault from '../layouts/client';
@@ -12,7 +13,7 @@ const routerLinks = [
     element: <LayoutDefault />,
     children: [
       { path: '/', element: <Home /> },
-      { path: '/:id', element: 'home details' },
+      { path: '/:id', element: <Details /> },
     ],
   },
   {
