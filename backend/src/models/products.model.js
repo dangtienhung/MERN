@@ -89,7 +89,10 @@ const productSchema = new mongoose.Schema(
 			required: true,
 		},
 		images: [imageSchema],
-		brand: branchSchema,
+		brand: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Brand',
+		},
 		specifications: [specificationSchema],
 	},
 	{ timestamps: true }

@@ -1,5 +1,6 @@
 import * as dotenv from 'dotenv';
 
+import brandRouter from './routers/brand.js';
 import cors from 'cors';
 import express from 'express';
 import { fileURLToPath } from 'url';
@@ -28,6 +29,7 @@ app.use(express.static('src/images'));
 app.use('/api/file', imageRouter);
 app.use('/api', productRouter);
 app.use('/api', userRouter);
+app.use('/api', brandRouter);
 
 /* database */
 const database = process.env.MONGODB_URL;
