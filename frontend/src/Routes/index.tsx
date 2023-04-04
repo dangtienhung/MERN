@@ -1,5 +1,7 @@
+import { ProductsAdd, ProductsManager } from '../pages/admin/products';
 import { Route, Routes } from 'react-router-dom';
 
+import CartPage from '../pages/cart';
 import Dashboard from '../pages/admin/dashboard';
 import Details from '../pages/details/Details';
 import Home from '../pages/home';
@@ -8,7 +10,6 @@ import LayoutDefault from '../layouts/client';
 import LayoutLogin from '../layouts/client/LayoutLogin';
 import LoginAdmin from '../pages/login/LoginAdmin';
 import LoginPage from '../pages/login';
-import Products from '../pages/admin/products';
 import RegisterPage from '../pages/Register';
 
 const routerLinks = [
@@ -25,14 +26,15 @@ const routerLinks = [
     children: [
       { path: '/', element: <Home /> },
       { path: '/:id', element: <Details /> },
+      { path: '/cart', element: <CartPage /> },
     ],
   },
   {
     element: <LayoutAdmin />,
     children: [
       { path: '/admin/dashboard', element: <Dashboard /> },
-      { path: '/admin/mobile', element: 'mobile phone' },
-      { path: '/admin/mobile/add', element: <Products /> },
+      { path: '/admin/mobile', element: <ProductsManager /> },
+      { path: '/admin/mobile/add', element: <ProductsAdd /> },
       { path: '/admin/mobile/edit/:id', element: 'mobile phone edit' },
     ],
   },

@@ -1,3 +1,4 @@
-import Products from './Products';
+import ProductsAdd from './ProductsAdd';
+import ProductsManager from './ProductsManager';
 
-export default Products;
+export { ProductsAdd, ProductsManager };
