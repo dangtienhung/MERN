@@ -1,3 +1,4 @@
+import Specification from './specifications.model.js';
 import mongoose from 'mongoose';
 
 /* images */
@@ -38,38 +39,6 @@ const imageSchema = new mongoose.Schema(
 	{ timestamps: true, versionKey: false }
 );
 
-/* brand */
-const branchSchema = new mongoose.Schema({
-	name: {
-		type: String,
-		required: true,
-	},
-	slug: {
-		type: String,
-		required: true,
-	},
-});
-
-/* specifications */
-const attributesSchema = new mongoose.Schema({
-	code: {
-		type: String,
-		required: true,
-	},
-	name: {
-		type: String,
-		required: true,
-	},
-	value: {
-		type: String,
-		required: true,
-	},
-});
-const specificationSchema = new mongoose.Schema({
-	name: { type: String, required: true },
-	attributes: [attributesSchema],
-});
-
 const productSchema = new mongoose.Schema(
 	{
 		name: {
@@ -93,7 +62,10 @@ const productSchema = new mongoose.Schema(
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'Brand',
 		},
-		specifications: [specificationSchema],
+		specifications: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Specification',
+		},
 	},
 	{ timestamps: true }
 );

@@ -7,6 +7,9 @@ const brandSchema = new mongoose.Schema(
 			trim: true,
 			required: true,
 		},
+		slug: {
+			type: String,
+		},
 		products: [
 			{
 				type: mongoose.Schema.Types.ObjectId,

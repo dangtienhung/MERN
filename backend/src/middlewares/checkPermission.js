@@ -13,10 +13,6 @@ export const checkPermisstion = async (req, res, next) => {
 		const { _id } = jwt.verify(token, process.env.TOKEN_SECRET);
 		/* lấy thông tin user */
 		const user = await User.findById(_id);
-		console.log(
-			'🚀 ~ file: checkPermission.js:16 ~ checkPermisstion ~ user:',
-			user
-		);
 		/* kiểm tra phân quyền */
 		if (!user.role) {
 			throw new Error('User does not exist');

@@ -1,22 +1,20 @@
 import Brand from '../models/brand.model.js';
 import { brandValidate } from '../validate/brand.validate.js';
+import slugify from 'slugify';
 
 export const brandController = {
 	/* post */
 	createBrand: async (req, res) => {
 		try {
 			const body = req.body;
-			console.log(
-				'🚀 ~ file: brands.controller.js:9 ~ createBrand: ~ body:',
-				body
-			);
-			return;
 			/* validate */
 			const { error } = brandValidate.validate(body, { abortEarly: false });
 			if (error) {
 				const errors = error.details.map((err) => err.message);
 				return res.status(400).json({ message: errors });
 			}
+			const slug = slugify(body.name, { lower: true });
+			body.slug = slug;
 			/* create brand */
 			const brand = await Brand.create(body);
 			if (!brand) {
@@ -65,6 +63,18 @@ export const brandController = {
 				const errors = error.details.map((err) => err.message);
 				return res.status(400).json({ message: errors });
 			}
+			/* update */
+			const slug = slugify(req.body.name, { lower: true });
+			req.body.slug = slug;
+			const brand = await Brand.findByIdAndUpdate(req.params.id, req.body, {
+				new: true,
+			});
+			if (!brand) {
+				return res.status(400).json({ message: 'Update brand failed' });
+			}
+			return res
+				.status(200)
+				.json({ message: 'Update brand successfully', brand });
 		} catch (error) {
 			return res.status(500).json({ message: error.message });
 		}

@@ -9,6 +9,7 @@ import mongoose from 'mongoose';
 import morgan from 'morgan';
 import path from 'path';
 import productRouter from './routers/products.js';
+import specificationRouter from './routers/specification.js';
 import userRouter from './routers/users.js';
 
 export const __filename = fileURLToPath(import.meta.url);
@@ -30,6 +31,7 @@ app.use('/api/file', imageRouter);
 app.use('/api', productRouter);
 app.use('/api', userRouter);
 app.use('/api', brandRouter);
+app.use('/api', specificationRouter);
 
 /* database */
 const database = process.env.MONGODB_URL;
