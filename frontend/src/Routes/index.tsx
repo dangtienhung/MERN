@@ -10,6 +10,7 @@ import LayoutDefault from '../layouts/client';
 import LayoutLogin from '../layouts/client/LayoutLogin';
 import LoginAdmin from '../pages/login/LoginAdmin';
 import LoginPage from '../pages/login';
+import ManageEdit from '../pages/admin/categories/ManageEdit';
 import ManagerBrands from '../pages/admin/brands';
 import ManagerCategories from '../pages/admin/categories';
 import ManagerEdit from '../pages/admin/brands/ManagerEdit';
@@ -39,6 +40,7 @@ const routerLinks = [
       { path: '/admin/managers-brands', element: <ManagerBrands /> },
       { path: '/admin/managers-brands/:id', element: <ManagerEdit /> },
       { path: '/admin/managers-categories', element: <ManagerCategories /> },
+      { path: '/admin/managers-categories/:id', element: <ManageEdit /> },
       { path: '/admin/mobile', element: <ProductsManager /> },
       { path: '/admin/mobile/add', element: <ProductsAdd /> },
       { path: '/admin/mobile/edit/:id', element: 'mobile phone edit' },
