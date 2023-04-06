@@ -9,10 +9,6 @@ const MainLayout = () => {
   } = theme.useToken();
   return (
     <Layout className="site-layout">
-      <Breadcrumb
-        style={{ margin: '16px 24px' }}
-        items={[{ title: 'home' }, { title: 'home' }, { title: 'home' }]}
-      />
       <Layout.Content
         style={{
           padding: 24,

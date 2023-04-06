@@ -28,6 +28,18 @@ function getItem(
 
 export const items: MenuProps['items'] = [
   getItem(<Link to="/admin/dashboard">Dashboard</Link>, '/admin/dashboard', <LaptopOutlined />),
+  getItem('Quản lý chung', '/admin/managers', <LaptopOutlined />, [
+    getItem(
+      <Link to="/admin/managers-brands">Quản lý nhãn hàng</Link>,
+      '/admin/managers-brands',
+      <LaptopOutlined />
+    ),
+    getItem(
+      <Link to="/admin/managers-categories">Quản lý danh mục</Link>,
+      '/admin/managers-categories',
+      <LaptopOutlined />
+    ),
+  ]),
   getItem('Điện thoại', 'mobile', <MobileOutlined />, [
     getItem(<Link to="/admin/mobile">Danh sách điện thoại</Link>, '/admin/mobile'),
     getItem(<Link to="/admin/mobile/add">Thêm điện thoại</Link>, '/admin/mobile/add'),

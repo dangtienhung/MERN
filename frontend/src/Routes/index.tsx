@@ -10,6 +10,8 @@ import LayoutDefault from '../layouts/client';
 import LayoutLogin from '../layouts/client/LayoutLogin';
 import LoginAdmin from '../pages/login/LoginAdmin';
 import LoginPage from '../pages/login';
+import ManagerBrands from '../pages/admin/brands';
+import ManagerCategories from '../pages/admin/categories';
 import RegisterPage from '../pages/Register';
 
 const routerLinks = [
@@ -33,6 +35,8 @@ const routerLinks = [
     element: <LayoutAdmin />,
     children: [
       { path: '/admin/dashboard', element: <Dashboard /> },
+      { path: '/admin/managers-brands', element: <ManagerBrands /> },
+      { path: '/admin/managers-categories', element: <ManagerCategories /> },
       { path: '/admin/mobile', element: <ProductsManager /> },
       { path: '/admin/mobile/add', element: <ProductsAdd /> },
       { path: '/admin/mobile/edit/:id', element: 'mobile phone edit' },

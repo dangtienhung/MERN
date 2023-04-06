@@ -15,17 +15,20 @@
     "axios": "^1.3.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-highlight-words": "^0.20.0",
     "react-hook-form": "^7.43.8",
     "react-quill": "^2.0.0",
     "react-router-dom": "^6.9.0",
     "react-slick": "^0.29.0",
     "react-toastify": "^9.1.2",
     "sass": "^1.60.0",
-    "slick-slider": "^1.8.2"
+    "slick-slider": "^1.8.2",
+    "sweetalert2": "^11.7.3"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
+    "@types/react-highlight-words": "^0.16.4",
     "@types/react-slick": "^0.23.10",
     "@vitejs/plugin-react": "^3.1.0",
     "autoprefixer": "^10.4.14",
