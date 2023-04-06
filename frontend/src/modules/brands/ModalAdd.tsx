@@ -7,10 +7,9 @@ import { toast } from 'react-toastify';
 interface ModalAddProps {
   isModalOpen: boolean;
   setIsModalOpen: () => void;
-  setBrands: (brands: IBrand[]) => void;
 }
 
-const ModalAdd = ({ isModalOpen, setIsModalOpen, setBrands }: ModalAddProps) => {
+const ModalAdd = ({ isModalOpen, setIsModalOpen }: ModalAddProps) => {
   const handleSubmit = async (value: string) => {
     try {
       const response = await createBrand(value);

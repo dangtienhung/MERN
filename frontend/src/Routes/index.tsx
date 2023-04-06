@@ -12,6 +12,7 @@ import LoginAdmin from '../pages/login/LoginAdmin';
 import LoginPage from '../pages/login';
 import ManagerBrands from '../pages/admin/brands';
 import ManagerCategories from '../pages/admin/categories';
+import ManagerEdit from '../pages/admin/brands/ManagerEdit';
 import RegisterPage from '../pages/Register';
 
 const routerLinks = [
@@ -36,6 +37,7 @@ const routerLinks = [
     children: [
       { path: '/admin/dashboard', element: <Dashboard /> },
       { path: '/admin/managers-brands', element: <ManagerBrands /> },
+      { path: '/admin/managers-brands/:id', element: <ManagerEdit /> },
       { path: '/admin/managers-categories', element: <ManagerCategories /> },
       { path: '/admin/mobile', element: <ProductsManager /> },
       { path: '/admin/mobile/add', element: <ProductsAdd /> },

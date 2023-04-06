@@ -24,6 +24,32 @@ export const getAllBrands = async () => {
   }
 };
 
+/* get one */
+export const getOneBrand = async (id: string) => {
+  try {
+    const response = await instance.get(`/brands/${id}`);
+    if (response.data && response) {
+      return response;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+/* update */
+export const updateBrand = async (id: string, name: string) => {
+  try {
+    const response = await instance.put(`/brands/${id}`, name, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 /* delete */
 export const deleteBrand = async (id: string) => {
   try {

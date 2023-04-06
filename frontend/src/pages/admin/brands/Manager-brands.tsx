@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from 'react';
 import { ColumnType } from 'antd/es/table';
 import Highlighter from 'react-highlight-words';
 import { IBrand } from '../../../interfaces/brands';
+import { Link } from 'react-router-dom';
 import ModalAdd from '../../../modules/brands/ModalAdd';
 import Swal from 'sweetalert2';
 import { toast } from 'react-toastify';
@@ -130,9 +131,11 @@ const ManagerBrands: React.FC = () => {
       render: (_: string, record: IBrand) => {
         return (
           <Space>
-            <Button className="flex items-center justify-center">
-              <EditOutlined />
-            </Button>
+            <Link to={`/admin/managers-brands/${record._id}`}>
+              <Button className="flex items-center justify-center">
+                <EditOutlined />
+              </Button>
+            </Link>
             <Button
               className="flex items-center justify-center"
               onClick={() => handleDelete(record._id)}
@@ -186,7 +189,7 @@ const ManagerBrands: React.FC = () => {
       }
     };
     fetchData();
-  }, []);
+  }, [brands]);
   return (
     <>
       <Row>
@@ -213,7 +216,7 @@ const ManagerBrands: React.FC = () => {
           </Row>
         </Col>
       </Row>
-      <ModalAdd isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} setBrands={setBrands} />
+      <ModalAdd isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
     </>
   );
 };
