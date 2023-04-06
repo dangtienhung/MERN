@@ -1,5 +1,6 @@
 import * as dotenv from 'dotenv';
 
+import attributeRouter from './routers/attribute.js';
 import brandRouter from './routers/brand.js';
 import cors from 'cors';
 import express from 'express';
@@ -32,6 +33,7 @@ app.use('/api', productRouter);
 app.use('/api', userRouter);
 app.use('/api', brandRouter);
 app.use('/api', specificationRouter);
+app.use('/api', attributeRouter);
 
 /* database */
 const database = process.env.MONGODB_URL;
