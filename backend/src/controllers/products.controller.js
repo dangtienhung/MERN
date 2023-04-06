@@ -1,5 +1,7 @@
+import Brand from '../models/brand.model.js';
 import Product from '../models/products.model.js';
-import { productValidate } from '../validate/product.validate.js';
+import Specification from '../models/specifications.model.js';
+import { productValidator } from '../validate/product.validate.js';
 
 export const productController = {
 	/* post */
@@ -7,7 +9,7 @@ export const productController = {
 		try {
 			const body = req.body;
 			/* validate */
-			const { error } = productValidate.validate(body, {
+			const { error } = productValidator.validate(body, {
 				abortEarly: false,
 			});
 			if (error) {
@@ -19,6 +21,18 @@ export const productController = {
 			if (!product) {
 				return res.status(400).json({ message: 'Create product failed' });
 			}
+			/* update references */
+			await Brand.findByIdAndUpdate(product.brandId, {
+				$addToSet: {
+					products: product._id,
+				},
+			});
+			await Specification.findByIdAndUpdate(product.specificationsId, {
+				$addToSet: {
+					products: product._id,
+				},
+			});
+			/* trả về kết quả */
 			return res
 				.status(200)
 				.json({ message: 'Create product successfully', product });
@@ -60,7 +74,7 @@ export const productController = {
 		try {
 			const id = req.params.id;
 			const body = req.body;
-			const { error } = productValidate.validate(body, { abortEarly: false });
+			const { error } = productValidator.validate(body, { abortEarly: false });
 			if (error) {
 				const errors = error.details.map((err) => err.message);
 				return res.status(400).json({ message: errors });
