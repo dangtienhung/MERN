@@ -14,6 +14,10 @@ const attributeSchema = new mongoose.Schema(
 			type: String,
 			required: true,
 		},
+		specificationId: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Specifiction',
+		},
 	},
 	{ timestamps: true, versionKey: false }
 );

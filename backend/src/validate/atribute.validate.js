@@ -13,4 +13,8 @@ export const AtributeValidation = joi.object({
 		'string.empty': 'Value is required',
 		'any.required': 'Value is required',
 	}),
+	specificationId: joi.string().required().messages({
+		'string.empty': 'Specification is required',
+		'any.required': 'Specification is required',
+	}),
 });

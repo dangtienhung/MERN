@@ -1,21 +1,26 @@
 import mongoose from 'mongoose';
 
-const specificationSchema = new mongoose.Schema({
-	name: { type: String, required: true },
-	attributes: [
-		{
-			code: { type: String, required: true },
-			name: { type: String, required: true },
-			value: { type: String, required: true },
-		},
-	],
-	products: [
-		{
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'Product',
-		},
-	],
-});
+const specificationSchema = new mongoose.Schema(
+	{
+		name: { type: String, required: true },
+		attributes: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: 'Attribute',
+			},
+		],
+		products: [
+			{
+				type: mongoose.Schema.Types.ObjectId,
+				ref: 'Product',
+			},
+		],
+	},
+	{
+		timestamps: true,
+		versionKey: false,
+	}
+);
 
 const Specification = mongoose.model('Specifiction', specificationSchema);
 

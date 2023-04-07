@@ -11,19 +11,11 @@ export const specificationControllers = {
 				abortEarly: false,
 			});
 			if (error) {
-				console.log(
-					'🚀 ~ file: specifications.controller.js:14 ~ createSpecification: ~ error:',
-					error
-				);
 				const errors = error.details[0].map((err) => err.message);
 				return res.stauts(400).json(errors);
 			}
 			/* create */
 			const specification = await Specification.create(body);
-			console.log(
-				'🚀 ~ file: specifications.controller.js:18 ~ createSpecification: ~ specification:',
-				specification
-			);
 			if (!specification) {
 				return res.status(400).json({ message: 'Create specification failed' });
 			}
@@ -35,7 +27,7 @@ export const specificationControllers = {
 	/* get all */
 	getAllSpecifications: async (req, res) => {
 		try {
-			const specifications = await Specification.find();
+			const specifications = await Specification.find().populate('attributes');
 			if (!specifications) {
 				return res
 					.status(400)
@@ -49,9 +41,9 @@ export const specificationControllers = {
 	/* get one */
 	getOneSpecification: async (req, res) => {
 		try {
-			const specification = await Specification.findById(
-				req.params.id
-			).populate('products');
+			const specification = await Specification.findById(req.params.id)
+				.populate('attributes')
+				.populate('products');
 			if (!specification) {
 				return res
 					.status(400)

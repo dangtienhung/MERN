@@ -1,5 +1,6 @@
 import { AtributeValidation } from '../validate/atribute.validate.js';
 import Attribute from '../models/attribute.model.js';
+import Specification from '../models/specifications.model.js';
 
 // Create and Save a new Attribute
 export const atributeController = {
@@ -21,6 +22,10 @@ export const atributeController = {
 					message: 'Atribute not created',
 				});
 			}
+			/* update specification */
+			await Specification.findByIdAndUpdate(atribute.specificationId, {
+				$addToSet: { attributes: atribute._id },
+			});
 			return res.status(201).json({
 				message: 'Atribute created successfully',
 				atribute,
@@ -56,7 +61,9 @@ export const atributeController = {
 	readOneAtribute: async (req, res) => {
 		try {
 			/* read */
-			const atribute = await Attribute.findById(req.params.id);
+			const atribute = await Attribute.findById(req.params.id).populate(
+				'specificationId'
+			);
 			if (!atribute) {
 				return res.status(400).json({
 					message: 'Atribute not found',
