@@ -22,12 +22,12 @@ export const productController = {
 				return res.status(400).json({ message: 'Create product failed' });
 			}
 			/* update references */
-			await Brand.findByIdAndUpdate(product.brandId, {
+			await Brand.findByIdAndUpdate(product.brand, {
 				$addToSet: {
 					products: product._id,
 				},
 			});
-			await Specification.findByIdAndUpdate(product.specificationsId, {
+			await Specification.findByIdAndUpdate(product.specifications, {
 				$addToSet: {
 					products: product._id,
 				},
@@ -43,7 +43,14 @@ export const productController = {
 	/* getAllProduct */
 	getAllProduct: async (req, res) => {
 		try {
-			const products = await Product.find();
+			const products = await Product.find()
+				.populate('brand')
+				.populate({
+					path: 'specifications',
+					populate: {
+						path: 'attributes',
+					},
+				});
 			if (!products) {
 				return res.status(400).json({ message: 'Get products failed' });
 			}
@@ -58,7 +65,14 @@ export const productController = {
 	getOneProduct: async (req, res) => {
 		try {
 			const id = req.params.id;
-			const product = await Product.findOne({ _id: id });
+			const product = await Product.findById({ _id: id })
+				.populate('brand')
+				.populate({
+					path: 'specifications',
+					populate: {
+						path: 'attributeId',
+					},
+				});
 			if (!product) {
 				return res.status(400).json({ message: 'Get product failed' });
 			}

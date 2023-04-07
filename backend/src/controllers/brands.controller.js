@@ -30,7 +30,7 @@ export const brandController = {
 	/* get all brand */
 	getAllBrand: async (req, res) => {
 		try {
-			const brands = await Brand.find();
+			const brands = await Brand.find().select('-products');
 			if (!brands) {
 				return res.status(400).json({ message: 'Get brands failed' });
 			}
@@ -45,7 +45,7 @@ export const brandController = {
 	getOneBrand: async (req, res) => {
 		try {
 			const id = req.params.id;
-			const brand = await Brand.findById(id).populate('products');
+			const brand = await Brand.findById(id);
 			if (!brand) {
 				return res.status(400).json({ message: 'Get brand failed' });
 			}

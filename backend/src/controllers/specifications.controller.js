@@ -11,7 +11,9 @@ export const specificationControllers = {
 				abortEarly: false,
 			});
 			if (error) {
-				const errors = error.details[0].map((err) => err.message);
+				const errors = error.details.map((err) => {
+					return res.status(400).json({ message: err.message });
+				});
 				return res.stauts(400).json(errors);
 			}
 			/* create */
@@ -41,9 +43,9 @@ export const specificationControllers = {
 	/* get one */
 	getOneSpecification: async (req, res) => {
 		try {
-			const specification = await Specification.findById(req.params.id)
-				.populate('attributes')
-				.populate('products');
+			const specification = await Specification.findById(
+				req.params.id
+			).populate('attributes');
 			if (!specification) {
 				return res
 					.status(400)

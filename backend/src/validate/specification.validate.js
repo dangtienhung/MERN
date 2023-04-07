@@ -5,6 +5,10 @@ export const specificationValidation = joi.object({
 		'string.empty': 'Name is required',
 		'any.required': 'Name is required',
 	}),
+	attributes: joi.string().required().messages({
+		'string.empty': 'Attribute is required',
+		'any.required': 'Attribute is required',
+	}),
 	// attributes: joi
 	// 	.array()
 	// 	.required()

@@ -3,12 +3,10 @@ import mongoose from 'mongoose';
 const specificationSchema = new mongoose.Schema(
 	{
 		name: { type: String, required: true },
-		attributes: [
-			{
-				type: mongoose.Schema.Types.ObjectId,
-				ref: 'Attribute',
-			},
-		],
+		attributes: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Attribute',
+		},
 		products: [
 			{
 				type: mongoose.Schema.Types.ObjectId,

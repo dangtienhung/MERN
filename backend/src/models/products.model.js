@@ -57,14 +57,17 @@ const productSchema = new mongoose.Schema(
 			type: Number,
 			required: true,
 		},
-		images: [imageSchema],
-		brandId: {
+		images: {
+			type: [String],
+			required: true,
+		},
+		brand: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'Brand',
 		},
-		specificationsId: {
+		specifications: {
 			type: mongoose.Schema.Types.ObjectId,
-			ref: 'Specification',
+			ref: 'Specifiction',
 		},
 	},
 	{ timestamps: true }
