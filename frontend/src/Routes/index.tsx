@@ -15,6 +15,9 @@ import ManagerBrands from '../pages/admin/brands';
 import ManagerCategories from '../pages/admin/categories';
 import ManagerEdit from '../pages/admin/brands/ManagerEdit';
 import RegisterPage from '../pages/Register';
+import Specification from '../pages/admin/specification/Specification';
+import SpecificationAdd from '../pages/admin/specification/SpecificationAdd';
+import SpecificationEdit from '../pages/admin/specification/SpecificationEdit';
 
 const routerLinks = [
   {
@@ -41,6 +44,9 @@ const routerLinks = [
       { path: '/admin/managers-brands/:id', element: <ManagerEdit /> },
       { path: '/admin/managers-categories', element: <ManagerCategories /> },
       { path: '/admin/managers-categories/:id', element: <ManageEdit /> },
+      { path: '/admin/manager-specifications', element: <Specification /> },
+      { path: '/admin/manager-specifications/add', element: <SpecificationAdd /> },
+      { path: '/admin/manager-specifications/edit/:id', element: <SpecificationEdit /> },
       { path: '/admin/mobile', element: <ProductsManager /> },
       { path: '/admin/mobile/add', element: <ProductsAdd /> },
       { path: '/admin/mobile/edit/:id', element: 'mobile phone edit' },

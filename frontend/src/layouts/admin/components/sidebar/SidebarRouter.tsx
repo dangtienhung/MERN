@@ -39,6 +39,11 @@ export const items: MenuProps['items'] = [
       '/admin/managers-categories',
       <LaptopOutlined />
     ),
+    getItem(
+      <Link to="/admin/manager-specifications">Quản lý danh mục</Link>,
+      '/admin/manager-specifications',
+      <LaptopOutlined />
+    ),
   ]),
   getItem('Điện thoại', 'mobile', <MobileOutlined />, [
     getItem(<Link to="/admin/mobile">Danh sách điện thoại</Link>, '/admin/mobile'),
