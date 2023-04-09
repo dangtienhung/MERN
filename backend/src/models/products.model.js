@@ -39,6 +39,32 @@ const imageSchema = new mongoose.Schema(
 	{ timestamps: true, versionKey: false }
 );
 
+const imageSchemas = new mongoose.Schema(
+	{
+		base_url: {
+			type: String,
+			required: true,
+		},
+		medium_url: {
+			type: String,
+			required: true,
+		},
+		thumb_url: {
+			type: String,
+			required: true,
+		},
+		url: {
+			type: String,
+			required: true,
+		},
+		url_viewer: {
+			type: String,
+			required: true,
+		},
+	},
+	{ versionKey: false }
+);
+
 const productSchema = new mongoose.Schema(
 	{
 		name: {
@@ -57,10 +83,7 @@ const productSchema = new mongoose.Schema(
 			type: Number,
 			required: true,
 		},
-		images: {
-			type: [String],
-			required: true,
-		},
+		images: [imageSchemas],
 		brand: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'Brand',

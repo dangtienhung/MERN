@@ -10,20 +10,23 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
+    "@hookform/resolvers": "^3.0.1",
     "@tailwindcss/line-clamp": "^0.4.4",
     "antd": "^5.3.3",
     "axios": "^1.3.4",
+    "html-react-parser": "^3.0.15",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-highlight-words": "^0.20.0",
-    "react-hook-form": "^7.43.8",
+    "react-hook-form": "^7.43.9",
     "react-quill": "^2.0.0",
     "react-router-dom": "^6.9.0",
     "react-slick": "^0.29.0",
     "react-toastify": "^9.1.2",
     "sass": "^1.60.0",
     "slick-slider": "^1.8.2",
-    "sweetalert2": "^11.7.3"
+    "sweetalert2": "^11.7.3",
+    "yup": "^1.0.2"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",

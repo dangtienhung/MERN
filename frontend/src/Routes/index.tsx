@@ -14,6 +14,7 @@ import ManageEdit from '../pages/admin/categories/ManageEdit';
 import ManagerBrands from '../pages/admin/brands';
 import ManagerCategories from '../pages/admin/categories';
 import ManagerEdit from '../pages/admin/brands/ManagerEdit';
+import NotFound from '../pages/404/NotFound';
 import RegisterPage from '../pages/Register';
 import Specification from '../pages/admin/specification/Specification';
 import SpecificationAdd from '../pages/admin/specification/SpecificationAdd';
@@ -52,7 +53,7 @@ const routerLinks = [
       { path: '/admin/mobile/edit/:id', element: 'mobile phone edit' },
     ],
   },
-  { path: '*', element: 'not found 404' },
+  { path: '*', element: <NotFound /> },
 ];
 
 const Routers = () => {

@@ -102,6 +102,29 @@ export const productValidate = joi.object({
 		}),
 });
 
+const imagesValidate = joi.object({
+	base_url: joi.string().required().messages({
+		'string.empty': 'Base url is required',
+		'any.required': 'Base url is required',
+	}),
+	medium_url: joi.string().required().messages({
+		'string.empty': 'Medium url is required',
+		'any.required': 'Medium url is required',
+	}),
+	thumb_url: joi.string().required().messages({
+		'string.empty': 'Thumb url is required',
+		'any.required': 'Thumb url is required',
+	}),
+	url: joi.string().required().messages({
+		'string.empty': 'Url is required',
+		'any.required': 'Url is required',
+	}),
+	url_viewer: joi.string().required().messages({
+		'string.empty': 'Url viewer is required',
+		'any.required': 'Url viewer is required',
+	}),
+});
+
 export const productValidator = joi.object({
 	name: joi.string().required().messages({
 		'string.empty': 'Name is required',
@@ -132,10 +155,9 @@ export const productValidator = joi.object({
 		'string.empty': 'Specifications is required',
 		'any.required': 'Specifications is required',
 	}),
-	images: joi.array().items(joi.string().uri()).required().min(1).messages({
+	images: joi.array().required().min(1).items(imagesValidate).messages({
 		'array.base': 'Images must be an array',
 		'any.required': 'Images is required',
-		'array.min': 'At least one image is required',
-		'string.uri': 'Invalid image URL',
+		'array.min': 'Images must have at least 1 item',
 	}),
 });

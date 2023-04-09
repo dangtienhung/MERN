@@ -46,7 +46,7 @@ const LoginAdmin = () => {
               label="Password"
               rules={[{ required: true, message: 'Please enter your password!' }]}
             >
-              <Input placeholder="Enter your password" prefix={<LockOutlined />} />
+              <Input.Password placeholder="Enter your password" prefix={<LockOutlined />} />
             </Form.Item>
             <Button
               type="primary"

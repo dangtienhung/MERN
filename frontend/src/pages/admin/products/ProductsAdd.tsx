@@ -1,151 +1,264 @@
-import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import type { UploadFile } from 'antd/es/upload/interface';
-import { Button, Col, Form, Input, Row, Select, Typography, Upload, message } from 'antd';
-import { LoadingOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
-import { useState } from 'react';
+
+import * as yup from 'yup';
+
+import { Col, Row, Typography } from 'antd';
+import { IImage, IProduct } from '../../../interfaces/product';
+import { Link, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+
+import { IBrand } from '../../../interfaces/brands';
+import { ISpecification } from '../../../interfaces/specification';
+import ReactQuill from 'react-quill';
 import axios from 'axios';
+import { createProduct } from '../../../api/products';
+import { getAllBrands } from '../../../api/brands';
+import { getAllSpecifications } from '../../../api/specification';
+import { toast } from 'react-toastify';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 
-const Products = () => {
-  const [imageUrl, setImageUrl] = useState('');
-  console.log('🚀 ~ file: ProductsAdd.tsx:11 ~ Products ~ imageUrl:', imageUrl);
-  const [loading, setLoading] = useState(false);
-  const onFinish = (values: any) => {
-    console.log('🚀 ~ file: ProductsAdd.tsx:13 ~ onFinish ~ values:', values);
+const productSchema = yup.object({
+  name: yup.string().required('Vui lòng nhập tên sản phẩm'),
+  price: yup
+    .number()
+    .required('Vui lòng nhập giá sản phẩm')
+    .min(0, 'Giá sản phẩm không được nhỏ hơn 0')
+    .transform((value) => (isNaN(value) ? undefined : value))
+    .nullable(),
+  original_price: yup
+    .number()
+    .required('Vui lòng nhập giá gốc sản phẩm')
+    .min(0, 'Giá gốc sản phẩm không được nhỏ hơn 0')
+    .transform((value) => (isNaN(value) ? undefined : value))
+    .nullable(),
+  description: yup.string().required('Vui lòng nhập mô tả sản phẩm'),
+  images: yup.mixed().test('required', 'You need to provide a file', (file) => {
+    if (file) return true;
+    return false;
+  }),
+  brand: yup.string().required('Vui lòng chọn thương hiệu'),
+  specifications: yup.string().required('Vui lòng chọn thông số kỹ thuật'),
+});
+
+type FormData = yup.InferType<typeof productSchema>;
+
+const ProductsAdd = () => {
+  const naviaget = useNavigate();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: yupResolver(productSchema),
+    mode: 'onSubmit',
+  });
+
+  /* validate react quill */
+  const editorContent = watch('description');
+  useEffect(() => {
+    register('description', { required: true, minLength: 11 });
+  }, [register]);
+  const onEditorStateChange = (editorState: any) => {
+    setValue('description', editorState);
   };
-  const uploadImage = async (file: any) => {
+  const uploadImages = async (files: any) => {
+    const formData = new FormData();
+    const api = 'https://api.imgbb.com/1/upload?key=87c6dbc457af9764143a48715ccc1fc7';
+    const urls = [];
+    for (let i = 0; i < files.length; i++) {
+      formData.append('image', files[i]);
+      const response = await axios.post(api, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      if (response && response.data) {
+        const url: IImage = {
+          base_url: response.data.data.display_url,
+          medium_url: response.data.data.medium.url,
+          thumb_url: response.data.data.thumb.url,
+          url: response.data.data.url,
+          url_viewer: response.data.data.url_viewer,
+        };
+        urls.push(url);
+      }
+    }
+    return urls;
+  };
+  /* submit form */
+  const onSubmit = async (data: FormData) => {
     try {
-      setLoading(true);
-      const formData = new FormData();
-      formData.append('image', file);
-      const res = await axios.post(
-        'https://api.imgbb.com/1/upload?key=87c6dbc457af9764143a48715ccc1fc7',
-        formData
-      );
-      setImageUrl(res.data.data.url);
-      setLoading(false);
+      const files = await uploadImages(data.images);
+      console.log('🚀 ~ file: ProductsAdd.tsx:72 ~ onSubmit ~ files:', files);
+      if (files.length === 0) {
+        toast.error('Lỗi khi upload ảnh');
+        return;
+      }
+      const product: any = {
+        ...data,
+        images: files,
+      };
+      const response = await createProduct(product);
+      console.log('🚀 ~ file: ProductsAdd.tsx:105 ~ onSubmit ~ response:', response);
+      if (response && response.data) {
+        toast.success('Thêm sản phẩm thành công');
+        naviaget('/admin/mobile');
+      }
     } catch (error) {
-      message.error('Tải lên hình ảnh thất bại!');
-      setLoading(false);
+      toast.error('Lỗi khi thêm sản phẩm');
     }
   };
+  /* useState */
+  const [specifications, setSpecifications] = useState<ISpecification[]>([]);
+  const [brands, setBrands] = useState<IBrand[]>([]);
 
-  const handleChange = (info: any) => {
-    if (info.file.status === 'uploading') {
-      setLoading(true);
-      return;
-    }
-    if (info.file.status === 'done') {
-      uploadImage(info.file.originFileObj);
-    }
-  };
-
-  const beforeUpload = (file: any) => {
-    const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-    if (!isJpgOrPng) {
-      message.error('Bạn chỉ có thể tải lên tệp JPG/PNG!');
-      return false;
-    }
-    const isLt2M = file.size / 1024 / 1024 < 2;
-    if (!isLt2M) {
-      message.error('Hình ảnh phải có kích thước nhỏ hơn 2MB!');
-      return false;
-    }
-    return true;
-  };
-
-  const uploadButton = (
-    <div>
-      {loading ? <LoadingOutlined /> : <PlusOutlined />}
-      <div style={{ marginTop: 8 }}>Upload</div>
-    </div>
-  );
+  /* get data */
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const responseBrand = await getAllBrands();
+        const responseSpecification = await getAllSpecifications();
+        if (responseBrand && responseSpecification) {
+          setBrands(responseBrand.data.brands);
+          setSpecifications(responseSpecification.data);
+        }
+      } catch (error) {
+        toast.error('Lỗi khi lấy dữ liệu');
+      }
+    };
+    fetchData();
+  }, []);
   return (
     <Row>
       <Col span={24}>
-        <Typography.Title level={3}>Thêm sản phẩm</Typography.Title>
+        <div className="flex justify-between items-center">
+          <Typography.Title level={3}>Thêm sản phẩm</Typography.Title>
+          <Link to="/admin/mobile">Quay lại</Link>
+        </div>
       </Col>
       <Col span={24}>
-        <Form layout="vertical" autoComplete="off" onFinish={onFinish}>
-          <Row gutter={50}>
-            <Col span={12}>
-              <Form.Item
-                label="Tên sản phẩm"
-                name="name"
-                rules={[{ required: true, message: 'Không được bỏ trống' }]}
+        <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
+          <div className="grid md:grid-cols-2 md:gap-6">
+            <div className="relative z-0 w-full mb-6 group">
+              <input
+                type="text"
+                {...register('name')}
+                id="name"
+                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              />
+              <label
+                htmlFor="name"
+                className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
               >
-                <Input placeholder="Tên sản phẩm" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Giá khuyến mại"
-                name="original_price"
-                rules={[{ required: true, message: 'Không được bỏ trống' }]}
+                Tên sản phẩm
+              </label>
+              {errors.name && <span className="text-primary text-xs">{errors.name.message}</span>}
+            </div>
+            <div className="relative z-0 w-full mb-6 group">
+              <input
+                type="number"
+                {...register('price')}
+                id="price"
+                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              />
+              <label
+                htmlFor="price"
+                className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
               >
-                <Input placeholder="Giá khuyến mại" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Giá sản phẩm"
-                name="price"
-                rules={[{ required: true, message: 'Không được bỏ trống' }]}
+                Giá khuyến mại
+              </label>
+              {errors.price && <span className="text-primary text-xs">{errors.price.message}</span>}
+            </div>
+            <div className="relative z-0 w-full mb-6 group">
+              <input
+                type="number"
+                {...register('original_price')}
+                id="price_origin"
+                className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+              />
+              <label
+                htmlFor="price_origin"
+                className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:left-0 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
               >
-                <Input placeholder="Giá sản phẩm" />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Thương hiệu"
-                name="brand"
-                rules={[{ required: true, message: 'Không được bỏ trống' }]}
+                Giá gốc
+              </label>
+              {errors.original_price && (
+                <span className="text-primary text-xs">{errors.original_price.message}</span>
+              )}
+            </div>
+            <div className="relative z-0 w-full mb-6 group">
+              <select
+                {...register('brand')}
+                className="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
               >
-                <Select placeholder="Thương hiệu">
-                  <Select.Option value="ahih">ahihi</Select.Option>
-                </Select>
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item
-                label="Danh mục sản phẩm"
-                name="specification"
-                rules={[{ required: true, message: 'Không được bỏ trống' }]}
+                {brands.map((brand: IBrand) => (
+                  <option value={brand._id} key={brand._id}>
+                    {brand.name}
+                  </option>
+                ))}
+              </select>
+              {errors.brand && <span className="text-primary text-xs">{errors.brand.message}</span>}
+            </div>
+            <div className="relative z-0 w-full mb-6 group">
+              <select
+                {...register('specifications')}
+                className="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
               >
-                <Select placeholder="Danh mục sản phẩm">
-                  <Select.Option value="ahih">ahihi</Select.Option>
-                </Select>
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row className="mt-5">
-            <Col span={12}>
-              <Upload
-                name="avatar"
-                listType="picture-card"
-                className="avatar-uploader"
-                showUploadList={false}
-                beforeUpload={beforeUpload}
-                onChange={handleChange}
-              >
-                {imageUrl ? (
-                  <img src={imageUrl} alt="avatar" style={{ width: '100%' }} />
-                ) : (
-                  uploadButton
-                )}
-              </Upload>
-            </Col>
-            <Col span={12}></Col>
-            <Col span={24} className="mt-5 text-center">
-              <Button type="primary" className="bg-blue-500" htmlType="submit">
-                Thêm sản phẩm
-              </Button>
-            </Col>
-          </Row>
-        </Form>
+                {specifications.map((specification: ISpecification) => (
+                  <option value={specification._id} key={specification._id}>
+                    {specification.name}
+                  </option>
+                ))}
+              </select>
+              {errors.brand && <span className="text-primary text-xs">{errors.brand.message}</span>}
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-1 md:gap-6">
+            <div className="relative z-0 w-full mb-6 group">
+              <div>
+                <label
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  htmlFor="file_input"
+                >
+                  Upload file
+                </label>
+                <input
+                  id="images"
+                  type="file"
+                  multiple
+                  {...register('images')}
+                  className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                />
+              </div>
+              {errors.images && (
+                <span className="text-primary text-xs">{errors.images.message}</span>
+              )}
+            </div>
+          </div>
+          <div className="grid md:grid-cols-1 md:gap-6">
+            <div className="relative z-0 w-full mb-6 group">
+              <ReactQuill theme="snow" value={editorContent} onChange={onEditorStateChange} />
+              {errors.description && (
+                <span className="text-primary text-xs">{errors.description.message}</span>
+              )}
+            </div>
+          </div>
+          <div className="w-full">
+            <button
+              type="submit"
+              className="text-white !w-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            >
+              Submit
+            </button>
+          </div>
+        </form>
       </Col>
     </Row>
   );
 };
 
-export default Products;
+export default ProductsAdd;
