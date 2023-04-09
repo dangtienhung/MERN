@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 
 import { IBrand } from '../../../interfaces/brands';
 import { ISpecification } from '../../../interfaces/specification';
+import { LoadingOutlined } from '@ant-design/icons';
 import ReactQuill from 'react-quill';
 import axios from 'axios';
 import { createProduct } from '../../../api/products';
@@ -50,7 +51,7 @@ const ProductsAdd = () => {
     handleSubmit,
     watch,
     setValue,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<FormData>({
     resolver: yupResolver(productSchema),
     mode: 'onSubmit',
@@ -65,38 +66,45 @@ const ProductsAdd = () => {
     setValue('description', editorState);
   };
   const uploadImages = async (files: any) => {
+    const folder_name = 'assignment5';
+    const preset_name = 'assignment5';
+    const cloud_name = 'dcwdrvxdg';
+    const api = `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`;
     const formData = new FormData();
-    const api = 'https://api.imgbb.com/1/upload?key=87c6dbc457af9764143a48715ccc1fc7';
+    formData.append('folder', folder_name);
+    formData.append('upload_preset', preset_name);
+    // const api = 'https://api.imgbb.com/1/upload?key=87c6dbc457af9764143a48715ccc1fc7';
     const urls = [];
-    for (let i = 0; i < files.length; i++) {
-      formData.append('image', files[i]);
+    for (const file of files) {
+      formData.append('file', file);
       const response = await axios.post(api, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          'Content-type': 'multipart/form-data',
         },
       });
       if (response && response.data) {
-        const url: IImage = {
-          base_url: response.data.data.display_url,
-          medium_url: response.data.data.medium.url,
-          thumb_url: response.data.data.thumb.url,
-          url: response.data.data.url,
-          url_viewer: response.data.data.url_viewer,
-        };
-        urls.push(url);
+        console.log('🚀 ~ file: ProductsAdd.tsx:86 ~ uploadImages ~ response:', response);
+        // const url: IImage = {
+        //   base_url: response.data.data.display_url,
+        //   medium_url: response.data.data.medium.url,
+        //   thumb_url: response.data.data.thumb.url,
+        //   url: response.data.data.url,
+        //   url_viewer: response.data.data.url_viewer,
+        // };
+        // urls.push(url);
       }
     }
-    return urls;
+    // return urls;
   };
   /* submit form */
   const onSubmit = async (data: FormData) => {
     try {
       const files = await uploadImages(data.images);
       console.log('🚀 ~ file: ProductsAdd.tsx:72 ~ onSubmit ~ files:', files);
-      if (files.length === 0) {
-        toast.error('Lỗi khi upload ảnh');
-        return;
-      }
+      // if (files.length === 0) {
+      //   toast.error('Lỗi khi upload ảnh');
+      //   return;
+      // }
       const product: any = {
         ...data,
         images: files,
@@ -134,15 +142,15 @@ const ProductsAdd = () => {
   return (
     <Row>
       <Col span={24}>
-        <div className="flex justify-between items-center">
+        <div className="flex items-center justify-between">
           <Typography.Title level={3}>Thêm sản phẩm</Typography.Title>
           <Link to="/admin/mobile">Quay lại</Link>
         </div>
       </Col>
       <Col span={24}>
         <form autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-          <div className="grid md:grid-cols-2 md:gap-6">
-            <div className="relative z-0 w-full mb-6 group">
+          <div className="md:grid-cols-2 md:gap-6 grid">
+            <div className="group relative z-0 w-full mb-6">
               <input
                 type="text"
                 {...register('name')}
@@ -157,7 +165,7 @@ const ProductsAdd = () => {
               </label>
               {errors.name && <span className="text-primary text-xs">{errors.name.message}</span>}
             </div>
-            <div className="relative z-0 w-full mb-6 group">
+            <div className="group relative z-0 w-full mb-6">
               <input
                 type="number"
                 {...register('price')}
@@ -172,7 +180,7 @@ const ProductsAdd = () => {
               </label>
               {errors.price && <span className="text-primary text-xs">{errors.price.message}</span>}
             </div>
-            <div className="relative z-0 w-full mb-6 group">
+            <div className="group relative z-0 w-full mb-6">
               <input
                 type="number"
                 {...register('original_price')}
@@ -189,7 +197,7 @@ const ProductsAdd = () => {
                 <span className="text-primary text-xs">{errors.original_price.message}</span>
               )}
             </div>
-            <div className="relative z-0 w-full mb-6 group">
+            <div className="group relative z-0 w-full mb-6">
               <select
                 {...register('brand')}
                 className="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
@@ -202,7 +210,7 @@ const ProductsAdd = () => {
               </select>
               {errors.brand && <span className="text-primary text-xs">{errors.brand.message}</span>}
             </div>
-            <div className="relative z-0 w-full mb-6 group">
+            <div className="group relative z-0 w-full mb-6">
               <select
                 {...register('specifications')}
                 className="block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-200 appearance-none dark:text-gray-400 dark:border-gray-700 focus:outline-none focus:ring-0 focus:border-gray-200 peer"
@@ -217,11 +225,11 @@ const ProductsAdd = () => {
             </div>
           </div>
 
-          <div className="grid md:grid-cols-1 md:gap-6">
-            <div className="relative z-0 w-full mb-6 group">
+          <div className="md:grid-cols-1 md:gap-6 grid">
+            <div className="group relative z-0 w-full mb-6">
               <div>
                 <label
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                  className="dark:text-white block mb-2 text-sm font-medium text-gray-900"
                   htmlFor="file_input"
                 >
                   Upload file
@@ -231,7 +239,7 @@ const ProductsAdd = () => {
                   type="file"
                   multiple
                   {...register('images')}
-                  className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400"
+                  className="bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer"
                 />
               </div>
               {errors.images && (
@@ -239,8 +247,8 @@ const ProductsAdd = () => {
               )}
             </div>
           </div>
-          <div className="grid md:grid-cols-1 md:gap-6">
-            <div className="relative z-0 w-full mb-6 group">
+          <div className="md:grid-cols-1 md:gap-6 grid">
+            <div className="group relative z-0 w-full mb-6">
               <ReactQuill theme="snow" value={editorContent} onChange={onEditorStateChange} />
               {errors.description && (
                 <span className="text-primary text-xs">{errors.description.message}</span>
@@ -250,9 +258,9 @@ const ProductsAdd = () => {
           <div className="w-full">
             <button
               type="submit"
-              className="text-white !w-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              className="text-white flex justify-center items-center !w-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
-              Submit
+              {isSubmitting ? <LoadingOutlined /> : 'Thêm sản phẩm'}
             </button>
           </div>
         </form>

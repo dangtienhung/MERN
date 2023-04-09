@@ -1,10 +1,22 @@
 import './style.scss';
 
-import { Card, Carousel, Col, Image, Pagination, PaginationProps, Row, Typography } from 'antd';
+import {
+  Card,
+  Carousel,
+  Col,
+  Image,
+  Pagination,
+  PaginationProps,
+  Rate,
+  Row,
+  Typography,
+} from 'antd';
+import { useEffect, useState } from 'react';
 
+import { IProduct } from '../../interfaces/product';
 import { Link } from 'react-router-dom';
 import { StarFilled } from '@ant-design/icons';
-import { useState } from 'react';
+import { getAllProducts } from '../../api/products';
 
 const contentStyle: React.CSSProperties = {
   height: '460px',
@@ -12,14 +24,28 @@ const contentStyle: React.CSSProperties = {
 };
 
 const HomeComponent: React.FC = () => {
-  const [data] = useState(Array(13).fill(null));
+  const [products, setProducts] = useState<IProduct[]>([]);
   const pageSize = 8;
   const [currentPage, setCurrentPage] = useState(1);
   const onChange: PaginationProps['onChange'] = (page) => {
     setCurrentPage(page);
   };
   const startIndex = (currentPage - 1) * pageSize;
-  const visibleData = data.slice(startIndex, startIndex + pageSize);
+  const visibleData = products.slice(startIndex, startIndex + pageSize);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getAllProducts();
+        if (response && response.data) {
+          const { products } = response.data;
+          setProducts(products);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, []);
   return (
     <>
       <div className="mt-8">
@@ -27,7 +53,7 @@ const HomeComponent: React.FC = () => {
           <div style={contentStyle}>
             <Image
               src="https://cdn2.cellphones.com.vn/690x300,webp,q100/https://dashboard.cellphones.com.vn/storage/redmi-note12-pre-sliding-0034.png"
-              className="w-full h-full object-cover rounded"
+              className="object-cover w-full h-full rounded"
               alt="ahihh"
               preview={false}
             />
@@ -36,7 +62,7 @@ const HomeComponent: React.FC = () => {
           <div style={contentStyle}>
             <Image
               src="https://cdn2.cellphones.com.vn/690x300,webp,q100/https://dashboard.cellphones.com.vn/storage/oppo-flip-pre-order-sliding-new.png"
-              className="w-full h-full object-cover"
+              className="object-cover w-full h-full"
               alt="ahihh"
               preview={false}
             />
@@ -52,35 +78,31 @@ const HomeComponent: React.FC = () => {
                 <Card
                   hoverable
                   cover={
-                    <Link to="/ahihi" className="w-full inline-block">
+                    <Link to={`/${item._id}`} className="inline-block w-full">
                       <img
                         alt="example"
-                        src="https://cdn2.cellphones.com.vn/358x358,webp,q100/media/catalog/product/1/_/1_252.jpg"
-                        className="w-[260px] h-[260px] object-cover mx-auto"
+                        src={item.images[0].thumb_url}
+                        className="w-full h-[260px] object-cover mx-auto"
                       />
                     </Link>
                   }
                 >
-                  <Link to="/abcba">
-                    <Typography.Title level={5} className="line-clamp-2">
-                      Samsung Galaxy S22 Plus (8GB + 128GB)
+                  <Link to={`/${item._id}`}>
+                    <Typography.Title level={5} className="line-clamp-1">
+                      {item.name}
                     </Typography.Title>
-                    <div className="flex justify-between items-center">
-                      <Typography.Text type="danger">20.190.000 ₫</Typography.Text>
+                    <div className="flex items-center justify-between">
+                      <Typography.Text type="danger">{item.price}đ</Typography.Text>
                       <Typography.Text type="secondary" className="text-sm">
-                        25.990.000 ₫
+                        {item.original_price}
                       </Typography.Text>
                     </div>
                   </Link>
                   <div className="flex justify-between mt-3">
-                    <div className="flex gap-x-1">
-                      {Array(5)
-                        .fill(null)
-                        .map((item, index) => (
-                          <StarFilled key={index} />
-                        ))}
+                    <div className="gap-x-1 flex">
+                      <Rate defaultValue={Math.floor(Math.random() * 5) + 1} />
                     </div>
-                    <span>1 đánh giá</span>
+                    <span>{Math.floor(Math.random() * 100)} đánh giá</span>
                   </div>
                 </Card>
               </Col>
@@ -92,7 +114,7 @@ const HomeComponent: React.FC = () => {
             defaultCurrent={1}
             current={currentPage}
             onChange={onChange}
-            total={data.length}
+            total={products.length}
             pageSize={pageSize}
           />
         </Col>

@@ -70,7 +70,7 @@ export const productController = {
 				.populate({
 					path: 'specifications',
 					populate: {
-						path: 'attributeId',
+						path: 'attributes',
 					},
 				});
 			if (!product) {
