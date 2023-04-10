@@ -43,6 +43,30 @@ export const productController = {
 	/* getAllProduct */
 	getAllProduct: async (req, res) => {
 		try {
+			/* search query */
+			const query = req.query.q;
+			if (query) {
+				const searchOption = query
+					? {
+							$or: [
+								{ name: { $regex: query, $options: 'i' } },
+								{ descr: { $regex: query, $options: 'i' } },
+							],
+					  }
+					: {};
+				try {
+					const products = await Product.find(searchOption);
+					if (!products) {
+						return res.status(400).json({ message: 'Get products failed' });
+					}
+					return res
+						.status(200)
+						.json({ message: 'Get products successfully', products });
+				} catch (error) {
+					return res.status(500).json({ message: error.message });
+				}
+			}
+
 			const products = await Product.find()
 				.populate('brand')
 				.populate({
