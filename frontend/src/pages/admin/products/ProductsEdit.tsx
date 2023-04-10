@@ -2,16 +2,17 @@ import 'react-quill/dist/quill.snow.css';
 
 import * as yup from 'yup';
 
-import { Col, Row, Typography } from 'antd';
-import { Link, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { Col, Row, Spin, Typography } from 'antd';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { getProductById, updateProduct } from '../../../api/products';
 
 import { IBrand } from '../../../interfaces/brands';
+import { IProduct } from '../../../interfaces/product';
 import { ISpecification } from '../../../interfaces/specification';
 import { LoadingOutlined } from '@ant-design/icons';
 import ReactQuill from 'react-quill';
 import axios from 'axios';
-import { createProduct } from '../../../api/products';
 import { getAllBrands } from '../../../api/brands';
 import { getAllSpecifications } from '../../../api/specification';
 import { toast } from 'react-toastify';
@@ -32,7 +33,6 @@ const productSchema = yup.object({
     .min(0, 'Giá gốc sản phẩm không được nhỏ hơn 0')
     .transform((value) => (isNaN(value) ? undefined : value))
     .nullable(),
-  description: yup.string().required('Vui lòng nhập mô tả sản phẩm'),
   images: yup.mixed().test('required', 'You need to provide a file', (file) => {
     if (file) return true;
     return false;
@@ -42,78 +42,25 @@ const productSchema = yup.object({
 });
 
 type FormData = yup.InferType<typeof productSchema>;
-
-const ProductsAdd = () => {
-  const naviaget = useNavigate();
+const ProductsEdit = () => {
+  /* react hook form */
   const {
     register,
     handleSubmit,
-    watch,
-    setValue,
     formState: { errors, isSubmitting },
   } = useForm<FormData>({
     resolver: yupResolver(productSchema),
     mode: 'onSubmit',
   });
 
-  /* validate react quill */
-  const editorContent = watch('description');
-  useEffect(() => {
-    register('description', { required: true, minLength: 11 });
-  }, [register]);
-  const onEditorStateChange = (editorState: any) => {
-    setValue('description', editorState);
-  };
-  const uploadImages = async (files: any) => {
-    const folder_name = 'assignment5';
-    const preset_name = 'assignment5';
-    const cloud_name = 'dcwdrvxdg';
-    const api = `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`;
-    const formData = new FormData();
-    formData.append('folder', folder_name);
-    formData.append('upload_preset', preset_name);
-    // const api = 'https://api.imgbb.com/1/upload?key=87c6dbc457af9764143a48715ccc1fc7';
-    const urls = [];
-    for (const file of files) {
-      formData.append('file', file);
-      const response = await axios.post(api, formData, {
-        headers: {
-          'Content-type': 'multipart/form-data',
-        },
-      });
-      if (response && response.data) {
-        urls.push(response.data.url);
-      }
-    }
-    return urls;
-  };
-  /* submit form */
-  const onSubmit = async (data: FormData) => {
-    try {
-      const files = await uploadImages(data.images);
-      console.log('🚀 ~ file: ProductsAdd.tsx:72 ~ onSubmit ~ files:', files);
-      if (files.length === 0) {
-        toast.error('Lỗi khi upload ảnh');
-        return;
-      }
-      const product: any = {
-        ...data,
-        images: files,
-      };
-      const response = await createProduct(product);
-      console.log('🚀 ~ file: ProductsAdd.tsx:105 ~ onSubmit ~ response:', response);
-      if (response && response.data) {
-        toast.success('Thêm sản phẩm thành công');
-        naviaget('/admin/mobile');
-      }
-    } catch (error) {
-      toast.error('Lỗi khi thêm sản phẩm');
-    }
-  };
+  const { id } = useParams();
+  const navigate = useNavigate();
+
   /* useState */
+  const [product, setProduct] = useState<IProduct>();
   const [specifications, setSpecifications] = useState<ISpecification[]>([]);
   const [brands, setBrands] = useState<IBrand[]>([]);
-
+  const [value, setValue] = useState<string>('');
   /* get data */
   useEffect(() => {
     const fetchData = async () => {
@@ -130,11 +77,88 @@ const ProductsAdd = () => {
     };
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (!product) return;
+    setValue(product.description);
+  }, [product?.description]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (!id) return;
+        const response = await getProductById(id);
+        if (!response) {
+          toast.error('Sản phẩm không tồn tại');
+          navigate('/admin/mobile');
+          return;
+        }
+        const { product } = response.data;
+        setProduct(product);
+      } catch (error) {
+        toast.error('Sản phẩm không tồn tại');
+        navigate('/admin/mobile');
+      }
+    };
+    fetchData();
+  }, []);
+
+  if (!product)
+    return (
+      <div className="flex items-center justify-center">
+        <Spin size="large" />
+      </div>
+    );
+
+  const uploadImages = async (files: any) => {
+    const formData = new FormData();
+    const folder_name = 'assignment5';
+    const preset_name = 'assignment5';
+    const cloud_name = 'dcwdrvxdg';
+    const api = `https://api.cloudinary.com/v1_1/${cloud_name}/image/upload`;
+    formData.append('folder', folder_name);
+    formData.append('upload_preset', preset_name);
+    const urls = [];
+    for (const file of files) {
+      formData.append('file', file);
+      const response = await axios.post(api, formData, {
+        headers: {
+          'Content-type': 'multipart/form-data',
+        },
+      });
+      if (response && response.data) {
+        urls.push(response.data.url);
+      }
+    }
+    return urls;
+  };
+
+  /* handle submit form */
+  const onSubmit = async (data: any) => {
+    try {
+      if (!id) return;
+      const images = data.images;
+      let urls = [];
+      if (images.length > 0) {
+        urls = await uploadImages(images);
+      } else {
+        urls = product.images;
+      }
+      const values = { ...data, images: urls, description: value };
+      const response = await updateProduct(id, values);
+      if (response && response.data) {
+        toast.success('Sửa sản phẩm thành công');
+        navigate('/admin/mobile');
+      }
+    } catch (error) {
+      toast.error('Lỗi khi sửa sản phẩm');
+    }
+  };
   return (
     <Row>
       <Col span={24}>
         <div className="flex items-center justify-between">
-          <Typography.Title level={3}>Thêm sản phẩm</Typography.Title>
+          <Typography.Title level={3}>Sửa sản phẩm</Typography.Title>
           <Link to="/admin/mobile">Quay lại</Link>
         </div>
       </Col>
@@ -146,6 +170,7 @@ const ProductsAdd = () => {
                 type="text"
                 {...register('name')}
                 id="name"
+                defaultValue={product.name}
                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               />
               <label
@@ -161,6 +186,7 @@ const ProductsAdd = () => {
                 type="number"
                 {...register('price')}
                 id="price"
+                defaultValue={product.price}
                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               />
               <label
@@ -176,6 +202,7 @@ const ProductsAdd = () => {
                 type="number"
                 {...register('original_price')}
                 id="price_origin"
+                defaultValue={product.original_price}
                 className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
               />
               <label
@@ -217,13 +244,25 @@ const ProductsAdd = () => {
           </div>
 
           <div className="md:grid-cols-1 md:gap-6 grid">
+            <h3>Giữ lại ảnh cũ</h3>
+            <div className="grid grid-cols-4 gap-2">
+              {product.images.map((image: string) => (
+                <figure key={image} className="max-w-lg">
+                  <img
+                    className="h-[200px] max-w-full rounded-lg"
+                    src={image}
+                    alt="image description"
+                  />
+                </figure>
+              ))}
+            </div>
             <div className="group relative z-0 w-full mb-6">
               <div>
                 <label
                   className="dark:text-white block mb-2 text-sm font-medium text-gray-900"
                   htmlFor="file_input"
                 >
-                  Upload file
+                  Hoăc thay ảnh mới
                 </label>
                 <input
                   id="images"
@@ -240,10 +279,8 @@ const ProductsAdd = () => {
           </div>
           <div className="md:grid-cols-1 md:gap-6 grid">
             <div className="group relative z-0 w-full mb-6">
-              <ReactQuill theme="snow" value={editorContent} onChange={onEditorStateChange} />
-              {errors.description && (
-                <span className="text-primary text-xs">{errors.description.message}</span>
-              )}
+              <h3>Mô tả sản phẩm</h3>
+              <ReactQuill theme="snow" value={value} onChange={setValue} />
             </div>
           </div>
           <div className="w-full">
@@ -251,7 +288,7 @@ const ProductsAdd = () => {
               type="submit"
               className="text-white flex justify-center items-center !w-full bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
             >
-              {isSubmitting ? <LoadingOutlined /> : 'Thêm sản phẩm'}
+              {isSubmitting ? <LoadingOutlined /> : 'Sửa sản phẩm'}
             </button>
           </div>
         </form>
@@ -260,4 +297,4 @@ const ProductsAdd = () => {
   );
 };
 
-export default ProductsAdd;
+export default ProductsEdit;

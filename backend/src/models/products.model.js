@@ -83,7 +83,10 @@ const productSchema = new mongoose.Schema(
 			type: Number,
 			required: true,
 		},
-		images: [imageSchemas],
+		images: {
+			type: [String],
+			required: true,
+		},
 		brand: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'Brand',

@@ -10,6 +10,7 @@ import {
   Space,
   Table,
   Tag,
+  Tooltip,
   Typography,
 } from 'antd';
 import type { ColumnType, ColumnsType } from 'antd/es/table';
@@ -27,9 +28,12 @@ import { useEffect, useRef, useState } from 'react';
 import type { FilterConfirmProps } from 'antd/es/table/interface';
 import Highlighter from 'react-highlight-words';
 import { Link } from 'react-router-dom';
+import Preview from './components/Preview';
 import Swal from 'sweetalert2';
 import parse from 'html-react-parser';
 import { toast } from 'react-toastify';
+import { useFormatCurrent } from '../../../hooks/useFomatCurrent';
+import { useToggleModal } from '../../../hooks/useToggleValue';
 
 type DataIndex = keyof IProduct;
 
@@ -172,9 +176,9 @@ const ProductsManager = () => {
             <Row>
               <Col span={24}>
                 <Carousel autoplay dots={false}>
-                  {images.map((image: IImage) => (
-                    <div style={contentStyle} key={image._id}>
-                      <Image src={image.base_url} className="rounded-md" />
+                  {images.map((image: string) => (
+                    <div style={contentStyle} key={image}>
+                      <Image src={image} className="rounded-md" />
                     </div>
                   ))}
                 </Carousel>
@@ -188,11 +192,15 @@ const ProductsManager = () => {
       title: 'Price',
       dataIndex: 'price',
       key: 'price',
+      render: (price) => <Typography.Text>{useFormatCurrent(price)}đ</Typography.Text>,
     },
     {
       title: 'Sale',
       dataIndex: 'original_price',
       key: 'original_price',
+      render: (original_price) => (
+        <Typography.Text>{useFormatCurrent(original_price)}đ</Typography.Text>
+      ),
     },
     {
       title: 'Brand',
@@ -205,13 +213,6 @@ const ProductsManager = () => {
           </Tag>
         </>
       ),
-    },
-    {
-      title: 'Description',
-      dataIndex: 'description',
-      key: 'description',
-      ...getColumnSearchProps('description'),
-      render: (description) => <>{parse(description)}</>,
     },
     {
       title: 'Specification',
@@ -238,12 +239,17 @@ const ProductsManager = () => {
       fixed: 'right',
       render: (_, record: IProduct) => (
         <Space className="!flex-nowrap">
-          <Button className="flex items-center justify-center">
+          <Button
+            className="flex items-center justify-center"
+            onClick={() => handlePreview(record)}
+          >
             <EyeOutlined />
           </Button>
-          <Button className="flex items-center justify-center">
-            <EditOutlined />
-          </Button>
+          <Link to={`/admin/mobile/edit/${record._id}`} className="inline-block">
+            <Button className="flex items-center justify-center">
+              <EditOutlined />
+            </Button>
+          </Link>
           <Button
             className="flex items-center justify-center"
             onClick={() => handleDelete(record._id as string)}
@@ -257,6 +263,16 @@ const ProductsManager = () => {
 
   /* useState */
   const [products, setProducts] = useState<IProduct[]>([]);
+  const [preview, setPriview] = useState<IProduct | null>(null);
+  /* hooks */
+  const { value: openModal, handleToggleValue: isOpenModal } = useToggleModal();
+
+  /* handle preview */
+  const handlePreview = (record: IProduct) => {
+    setPriview(record);
+    isOpenModal(true);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -270,37 +286,40 @@ const ProductsManager = () => {
       }
     };
     fetchData();
-  }, [products]);
+  }, []);
   if (!products) return <>loading...</>;
   return (
-    <Row>
-      <Col span={24}>
-        <Row>
-          <Col span={12}>
-            <Typography.Title level={3}>Danh sách điện thoại</Typography.Title>
-          </Col>
-          <Col span={12} className="text-right">
-            <Link to="/admin/mobile/add" className="inline-block">
-              <Button type="primary" className="flex items-center justify-center bg-blue-500">
-                <PlusOutlined />
-                Thêm sản phẩm
-              </Button>
-            </Link>
-          </Col>
-        </Row>
-      </Col>
-      <Col span={24}>
-        <Table
-          columns={columns}
-          dataSource={products}
-          scroll={{ x: 'calc(700px + 50%)' }}
-          pagination={{
-            pageSize: 3,
-            showTotal: (total, range) => `${range[0]}-${range[1]} của ${total}`,
-          }}
-        />
-      </Col>
-    </Row>
+    <>
+      <Row>
+        <Col span={24}>
+          <Row>
+            <Col span={12}>
+              <Typography.Title level={3}>Danh sách điện thoại</Typography.Title>
+            </Col>
+            <Col span={12} className="text-right">
+              <Link to="/admin/mobile/add" className="inline-block">
+                <Button type="primary" className="flex items-center justify-center bg-blue-500">
+                  <PlusOutlined />
+                  Thêm sản phẩm
+                </Button>
+              </Link>
+            </Col>
+          </Row>
+        </Col>
+        <Col span={24}>
+          <Table
+            columns={columns}
+            dataSource={products}
+            scroll={{ x: 'calc(700px + 50%)' }}
+            pagination={{
+              pageSize: 3,
+              showTotal: (total, range) => `${range[0]}-${range[1]} của ${total}`,
+            }}
+          />
+        </Col>
+      </Row>
+      {preview && <Preview openModal={openModal} isOpenModal={isOpenModal} preview={preview} />}
+    </>
   );
 };
 

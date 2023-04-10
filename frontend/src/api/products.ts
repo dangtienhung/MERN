@@ -43,6 +43,22 @@ export const getProductById = async (id: string) => {
   }
 };
 
+/* update */
+export const updateProduct = async (id: string, product: IProduct) => {
+  try {
+    const response = await instance.put(`/products/${id}`, product, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    if (response && response.data) {
+      return response;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 /* delete */
 export const deleteProduct = async (id: string) => {
   try {

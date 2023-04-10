@@ -155,9 +155,15 @@ export const productValidator = joi.object({
 		'string.empty': 'Specifications is required',
 		'any.required': 'Specifications is required',
 	}),
-	images: joi.array().required().min(1).items(imagesValidate).messages({
+	// images: joi.array().required().min(1).items(imagesValidate).messages({
+	// 	'array.base': 'Images must be an array',
+	// 	'any.required': 'Images is required',
+	// 	'array.min': 'Images must have at least 1 item',
+	// }),
+	images: joi.array().items(joi.string().uri()).required().min(1).messages({
 		'array.base': 'Images must be an array',
 		'any.required': 'Images is required',
-		'array.min': 'Images must have at least 1 item',
+		'array.min': 'At least one image is required',
+		'string.uri': 'Invalid image URL',
 	}),
 });
