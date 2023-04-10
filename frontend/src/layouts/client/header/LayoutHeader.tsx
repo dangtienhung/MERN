@@ -7,8 +7,12 @@ import {
 import { Badge, Input } from 'antd';
 
 import { Link } from 'react-router-dom';
+import { RootState } from '../../../redux/store';
+import { useSelector } from 'react-redux';
 
 const LayoutHeader = () => {
+  /* redux */
+  const { total } = useSelector((state: RootState) => state.cart);
   return (
     <div className="flex h-[70px] justify-between items-center py-2 px-12 bg-primary text-white">
       <Link to="/" className="inline-block">
@@ -41,7 +45,7 @@ const LayoutHeader = () => {
           </div>
         </div>
         <div className="flex items-center gap-x-3">
-          <Badge count={5}>
+          <Badge count={total}>
             <p>
               <ShoppingCartOutlined style={{ fontSize: '24px', color: '#fff' }} />
             </p>
