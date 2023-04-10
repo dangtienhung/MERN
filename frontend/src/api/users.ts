@@ -1,6 +1,7 @@
 import { IUser, IUserInfo } from '../interfaces/UserInfo';
 
 import { instance } from './axios';
+import { toast } from 'react-toastify';
 
 /* register */
 export const register = (data: IUser) => {
@@ -27,7 +28,11 @@ export const getOneUser = async (id: string) => {
 /* lấy ra tất cả */
 export const getAllUsers = async () => {
   try {
-    const response = await instance.get(`/users`);
+    const response = await instance.get(`/users`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
     if (response) {
       return response;
     }
@@ -47,7 +52,7 @@ export const deleteUser = async (id: string) => {
     if (response.data) {
       return response;
     }
-  } catch (error) {
-    console.log(error);
+  } catch (error: any) {
+    toast.error(error.response.data.message);
   }
 };

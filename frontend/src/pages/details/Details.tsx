@@ -12,6 +12,11 @@ import { useParams } from 'react-router-dom';
 const Details = () => {
   const { id } = useParams();
   const [product, setProduct] = useState<IProduct>();
+  const [wordCount, setWordCount] = useState<number>(2000);
+
+  const handleLoadMore = () => {
+    setWordCount(wordCount + 2000);
+  };
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -47,8 +52,8 @@ const Details = () => {
           <Col span={8}>
             <Carousel autoplay className="!rounded-lg">
               {product?.images.map((image) => (
-                <div key={image._id} className="!rounded-lg">
-                  <Image src={image.thumb_url} className="rounded-lg" />
+                <div key={image} className="!rounded-lg">
+                  <Image src={image} className="rounded-lg" />
                 </div>
               ))}
             </Carousel>
@@ -92,8 +97,13 @@ const Details = () => {
           Đặc điểm nổi bật
         </Typography.Title>
         <Row>
-          <Col>
-            <Typography.Text>{parse(product?.description)}</Typography.Text>
+          <Col className="text-center">
+            <Typography.Text>{parse(product?.description.slice(0, wordCount))}</Typography.Text>
+            {wordCount < product?.description.split(' ').length && (
+              <Button className="bg-primary" onClick={handleLoadMore}>
+                Load more
+              </Button>
+            )}
           </Col>
         </Row>
       </Col>

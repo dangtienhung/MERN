@@ -86,3 +86,10 @@ h2 {
     transform: translate(-50%, -50%);
   }
 }
+
+.ql-align-justify strong img {
+  margin: 20px auto;
+  border-radius: 12px;
+  width: 100%;
+  object-fit: cover;
+}

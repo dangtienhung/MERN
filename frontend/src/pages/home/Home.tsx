@@ -17,6 +17,7 @@ import { IProduct } from '../../interfaces/product';
 import { Link } from 'react-router-dom';
 import { StarFilled } from '@ant-design/icons';
 import { getAllProducts } from '../../api/products';
+import { useFormatCurrent } from '../../hooks/useFomatCurrent';
 
 const contentStyle: React.CSSProperties = {
   height: '460px',
@@ -81,7 +82,7 @@ const HomeComponent: React.FC = () => {
                     <Link to={`/${item._id}`} className="inline-block w-full">
                       <img
                         alt="example"
-                        src={item.images[0].thumb_url}
+                        src={item.images[0]}
                         className="w-full h-[260px] object-cover mx-auto"
                       />
                     </Link>
@@ -92,9 +93,11 @@ const HomeComponent: React.FC = () => {
                       {item.name}
                     </Typography.Title>
                     <div className="flex items-center justify-between">
-                      <Typography.Text type="danger">{item.price}đ</Typography.Text>
+                      <Typography.Text type="danger">
+                        {useFormatCurrent(item.price)}đ
+                      </Typography.Text>
                       <Typography.Text type="secondary" className="text-sm">
-                        {item.original_price}
+                        {useFormatCurrent(item.original_price)}đ
                       </Typography.Text>
                     </div>
                   </Link>

@@ -9,3 +9,10 @@ export interface IUser {
   password: string;
   confirmPassword: string;
 }
+
+export interface IUserData {
+  _id: string;
+  username: string;
+  email: string;
+  role: string;
+}

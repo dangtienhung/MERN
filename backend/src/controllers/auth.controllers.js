@@ -1,4 +1,5 @@
 import User from '../models/users.model.js';
+import { userValidatorRegister } from '../validate/user.validate.js';
 
 export const authControllers = {
 	/* get all */
@@ -10,7 +11,11 @@ export const authControllers = {
 					message: 'User does not exist',
 				});
 			}
-			return res.status(200).json(response);
+			const users = response.map((user) => {
+				const { password, ...data } = user._doc;
+				return data;
+			});
+			return res.status(200).json(users);
 		} catch (error) {
 			return res.status(500).json({ message: 'Internal server error' });
 		}
@@ -29,9 +34,40 @@ export const authControllers = {
 			return res.status(500).json({ message: 'Internal server error' });
 		}
 	},
+	/* update */
+	updateUser: async (req, res) => {
+		try {
+			const body = req.body;
+			/* validate */
+			const { error } = userValidatorRegister.validate(body, {
+				abortEarly: false,
+			});
+			if (error) {
+				const errors = error.details.map((err) => err.message);
+				return res.status(400).json({ message: errors });
+			}
+			/* update */
+			const users = await User.findByIdAndUpdate(req.params.id, body, {
+				new: true,
+			});
+			if (!users) {
+				return res.status(404).json({
+					message: 'User does not exist',
+				});
+			}
+			return res.status(200).json(users);
+		} catch (error) {
+			return res.status(500).json({ message: 'Internal server error' });
+		}
+	},
 	/* delete */
 	deleteUser: async (req, res) => {
 		try {
+			const admin = await User.findById(req.params.id);
+			const { role } = admin;
+			if (role === 'admin') {
+				return res.status(400).json({ message: 'You cannot delete admin' });
+			}
 			const user = await User.findByIdAndDelete(req.params.id);
 			if (!user) {
 				return res.status(404).json({
