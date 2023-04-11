@@ -50,12 +50,19 @@ export const productController = {
 					? {
 							$or: [
 								{ name: { $regex: query, $options: 'i' } },
-								{ descr: { $regex: query, $options: 'i' } },
+								{ description: { $regex: query, $options: 'i' } },
 							],
 					  }
 					: {};
 				try {
-					const products = await Product.find(searchOption);
+					const products = await Product.find(searchOption)
+						.populate('brand')
+						.populate({
+							path: 'specifications',
+							populate: {
+								path: 'attributes',
+							},
+						});
 					if (!products) {
 						return res.status(400).json({ message: 'Get products failed' });
 					}

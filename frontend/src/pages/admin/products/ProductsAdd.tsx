@@ -89,6 +89,7 @@ const ProductsAdd = () => {
   };
   /* submit form */
   const onSubmit = async (data: FormData) => {
+    console.log('🚀 ~ file: ProductsAdd.tsx:92 ~ onSubmit ~ data:', data);
     try {
       const files = await uploadImages(data.images);
       console.log('🚀 ~ file: ProductsAdd.tsx:72 ~ onSubmit ~ files:', files);

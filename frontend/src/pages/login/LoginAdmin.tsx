@@ -17,6 +17,7 @@ const LoginAdmin = () => {
           return;
         }
         localStorage.setItem('token', response.data.data.acessToken);
+        localStorage.setItem('admin', JSON.stringify(response.data.data.user));
         navigate('/admin/dashboard');
         toast.success('Đăng nhập thành công!');
       }

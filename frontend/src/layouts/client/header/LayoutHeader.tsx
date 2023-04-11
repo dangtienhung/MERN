@@ -3,12 +3,13 @@ import {
   CarryOutOutlined,
   SearchOutlined,
   ShoppingCartOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
-import { Badge, Carousel, Col, Drawer, Image, Input, Row, Typography } from 'antd';
+import { Badge, Button, Carousel, Col, Drawer, Form, Image, Input, Row, Typography } from 'antd';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 
-import { Link } from 'react-router-dom';
 import { RootState } from '../../../redux/store';
 import { getOneProductToCart } from '../../../redux/reducers/cartSlice';
 
@@ -25,6 +26,14 @@ const LayoutHeader = () => {
   const onClose = () => {
     setOpen(false);
   };
+  const navigate = useNavigate();
+  const handleLogin = () => {
+    navigate('/login');
+  };
+
+  const onFinish = (values: any) => {
+    console.log('Success:', values);
+  };
   return (
     <>
       <div className="flex h-[70px] justify-between items-center py-2 px-12 bg-primary text-white">
@@ -32,7 +41,9 @@ const LayoutHeader = () => {
           <img src="/anhhtus-logo_2.png" alt="logo" className="h-16 w-16 object-cover" />
         </Link>
         <div className="flex-1 text-center">
-          <Input placeholder="search" prefix={<SearchOutlined />} className="w-full max-w-xs" />
+          <Form layout="vertical" onFinish={onFinish}>
+            <Input placeholder="search" prefix={<SearchOutlined />} className="w-full max-w-xs" />
+          </Form>
         </div>
         <div className="flex items-center gap-x-10">
           <div>
@@ -48,13 +59,12 @@ const LayoutHeader = () => {
               <p>gần bạn</p>
             </div>
           </Link>
-          <div className="flex items-center gap-x-3">
+          <div className="flex items-center gap-x-3 cursor-pointer" onClick={() => handleLogin()}>
             <p>
-              <CarryOutOutlined style={{ fontSize: '24px', color: '#fff' }} />
+              <UserOutlined style={{ fontSize: '24px', color: '#fff' }} />
             </p>
             <div>
-              <p>Tra cứu</p>
-              <p>đơn hàng</p>
+              <p>Đăng nhập</p>
             </div>
           </div>
           <div className="flex items-center gap-x-3 cursor-pointer" onClick={() => showDrawer()}>

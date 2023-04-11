@@ -1,10 +1,22 @@
-import { Input, Layout, Menu, Typography } from 'antd';
+import { Button, Form, Input, Layout, Menu, Typography } from 'antd';
+import React, { useEffect, useState } from 'react';
 
 import { Link } from 'react-router-dom';
-import React from 'react';
 import { SearchOutlined } from '@ant-design/icons';
+import axios from 'axios';
 
 const HeaderLayout = () => {
+  const [value, setValue] = useState('');
+  const handleSubmit = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8080/api/products?q=${value}`);
+      if (response && response.data) {
+        console.log(response.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <Layout.Header
       className="header bg-primary-admin text-white h-[64px] flex items-center"
@@ -16,13 +28,22 @@ const HeaderLayout = () => {
           Dashboard
         </Link>
 
-        <div className="!w-[500px]">
-          <Input size="large" placeholder="Search" className="w-full" prefix={<SearchOutlined />} />
+        <div className="!w-[500px] gap-x-2 flex justify-center items-center">
+          <Input
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            placeholder="Search"
+            className="w-full"
+            prefix={<SearchOutlined />}
+          />
+          <Button className="flex justify-center items-center" onClick={handleSubmit}>
+            <SearchOutlined />
+          </Button>
         </div>
 
         <div>
-          <Typography.Title level={5} className="!mb-0 !text-white">
-            Welcome, Dang Tien Hung
+          <Typography.Title level={5} className="!mb-0 !text-white cursor-pointer">
+            Welcome, Admin
           </Typography.Title>
         </div>
       </div>

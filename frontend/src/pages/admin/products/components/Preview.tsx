@@ -11,7 +11,6 @@ interface IPreviewProps {
 }
 
 const Preview = ({ openModal, isOpenModal, preview }: IPreviewProps) => {
-  console.log('🚀 ~ file: Preview.tsx:13 ~ Preview ~ preview:', preview);
   return (
     <Modal
       title="Xem trước sản phẩm"

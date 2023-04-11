@@ -30,6 +30,7 @@ import Highlighter from 'react-highlight-words';
 import { Link } from 'react-router-dom';
 import Preview from './components/Preview';
 import Swal from 'sweetalert2';
+import axios from 'axios';
 import parse from 'html-react-parser';
 import { toast } from 'react-toastify';
 import { useFormatCurrent } from '../../../hooks/useFomatCurrent';
@@ -287,6 +288,19 @@ const ProductsManager = () => {
     };
     fetchData();
   }, []);
+
+  const [value, setValue] = useState('');
+  const handleSubmit = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8080/api/products?q=${value}`);
+      if (response && response.data) {
+        const { products } = response.data;
+        setProducts(products.map((product: IProduct) => ({ ...product, key: product._id })));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   if (!products) return <>loading...</>;
   return (
     <>
@@ -297,12 +311,30 @@ const ProductsManager = () => {
               <Typography.Title level={3}>Danh sách điện thoại</Typography.Title>
             </Col>
             <Col span={12} className="text-right">
-              <Link to="/admin/mobile/add" className="inline-block">
-                <Button type="primary" className="flex items-center justify-center bg-blue-500">
-                  <PlusOutlined />
-                  Thêm sản phẩm
-                </Button>
-              </Link>
+              <Row gutter={20}>
+                <Col span={12}>
+                  <Link to="/admin/mobile/add" className="inline-block">
+                    <Button type="primary" className="flex items-center justify-center bg-blue-500">
+                      <PlusOutlined />
+                      Thêm sản phẩm
+                    </Button>
+                  </Link>
+                </Col>
+                <Col span={12}>
+                  <div className="flex justify-center items-center">
+                    <Input
+                      value={value}
+                      onChange={(e) => setValue(e.target.value)}
+                      placeholder="Search"
+                      className="w-full"
+                      prefix={<SearchOutlined />}
+                    />
+                    <Button className="flex justify-center items-center" onClick={handleSubmit}>
+                      <SearchOutlined />
+                    </Button>
+                  </div>
+                </Col>
+              </Row>
             </Col>
           </Row>
         </Col>
