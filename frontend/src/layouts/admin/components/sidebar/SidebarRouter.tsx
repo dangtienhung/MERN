@@ -2,6 +2,7 @@ import {
   LaptopOutlined,
   MobileOutlined,
   NotificationOutlined,
+  ShoppingCartOutlined,
   UserOutlined,
 } from '@ant-design/icons';
 
@@ -43,6 +44,11 @@ export const items: MenuProps['items'] = [
       <Link to="/admin/manager-specifications">Quản lý danh mục</Link>,
       '/admin/manager-specifications',
       <LaptopOutlined />
+    ),
+    getItem(
+      <Link to="/admin/manager-carts">Quản lý danh mục</Link>,
+      '/admin/manager-carts',
+      <ShoppingCartOutlined />
     ),
   ]),
   getItem('Điện thoại', 'mobile', <MobileOutlined />, [

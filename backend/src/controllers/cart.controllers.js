@@ -38,7 +38,7 @@ export const cartController = {
 		try {
 			const carts = await Cart.find()
 				.populate({ path: 'userId', select: 'name email' })
-				.populate({ path: 'items.productId', select: 'name price' });
+				.populate({ path: 'items.productId', select: 'name price images' });
 			if (!carts) {
 				return res.status(404).json({ message: 'Cart not found' });
 			}

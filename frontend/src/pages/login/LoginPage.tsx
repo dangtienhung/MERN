@@ -27,6 +27,7 @@ const LoginPage = () => {
       if (response && response.data) {
         toast.success(response.data.message);
         localStorage.setItem('token', JSON.stringify(response.data.data.acessToken));
+        localStorage.setItem('user', JSON.stringify(response.data.data.user));
         navigate('/');
       }
     } catch (error) {
@@ -59,7 +60,7 @@ const LoginPage = () => {
               },
             ]}
           >
-            <Input placeholder="Enter your password" />
+            <Input.Password placeholder="Enter your password" />
           </MyFormItem>
           <Button
             type="primary"

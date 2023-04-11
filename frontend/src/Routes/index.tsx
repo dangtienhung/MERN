@@ -1,6 +1,7 @@
 import { ProductsAdd, ProductsManager } from '../pages/admin/products';
 import { Route, Routes } from 'react-router-dom';
 
+import Cart from '../pages/admin/cart/Cart';
 import CartPage from '../pages/cart';
 import Dashboard from '../pages/admin/dashboard';
 import Details from '../pages/details/Details';
@@ -50,6 +51,7 @@ const routerLinks = [
       { path: '/admin/manager-specifications', element: <Specification /> },
       { path: '/admin/manager-specifications/add', element: <SpecificationAdd /> },
       { path: '/admin/manager-specifications/edit/:id', element: <SpecificationEdit /> },
+      { path: '/admin/manager-carts', element: <Cart /> },
       { path: '/admin/mobile', element: <ProductsManager /> },
       { path: '/admin/mobile/add', element: <ProductsAdd /> },
       { path: '/admin/mobile/edit/:id', element: <ProductsEdit /> },

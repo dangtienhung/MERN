@@ -27,16 +27,18 @@ const CartPage = () => {
         <Col span={12}>
           <Row>
             <Col span={24}>
-              <div>
-                <div className="h-[200px] w-[200px] object-cover">
+              <Row>
+                <Col span={12}>
                   <Image
                     src="https://sgmall.vn/wp-content/uploads/2019/06/iphone-11-sgmall.jpg"
                     alt="image"
-                    preview={false}
-                    className="object-cover w-full h-full"
+                    className="object-cover h-[200px] w-[200px]"
                   />
-                </div>
-              </div>
+                </Col>
+                <Col span={12}>
+                  <Typography.Title>ahihii</Typography.Title>
+                </Col>
+              </Row>
             </Col>
           </Row>
         </Col>

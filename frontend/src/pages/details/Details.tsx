@@ -1,21 +1,25 @@
 import './style.scss';
 
 import { Button, Carousel, Col, Image, Row, Spin, Typography } from 'antd';
+import { Dispatch, useEffect, useState } from 'react';
+import { addProductToCart, fetchData } from '../../redux/reducers/cartSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import CartDrawer from '../cart/CartDrawer';
+import { ICart } from '../../interfaces/cart';
 import { IProduct } from '../../interfaces/product';
+import { IUserData } from '../../interfaces/UserInfo';
 import { RootState } from '../../redux/store';
 import { ShoppingCartOutlined } from '@ant-design/icons';
 import { getProductById } from '../../api/products';
 import parse from 'html-react-parser';
 import { useFormatCurrent } from '../../hooks/useFomatCurrent';
-import { useParams } from 'react-router-dom';
 import { useToggleModal } from '../../hooks/useToggleValue';
 
 const Details = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   /* useState */
   const [product, setProduct] = useState<IProduct>();
   const [wordCount, setWordCount] = useState<number>(2000);
@@ -46,9 +50,26 @@ const Details = () => {
   }, []);
 
   /* redux */
-  const dispatch = useDispatch();
+  const dispatch: Dispatch<any> = useDispatch();
   const { cart } = useSelector((state: RootState) => state.cart);
-  console.log('🚀 ~ file: Details.tsx:50 ~ Details ~ cart:', cart);
+
+  const handleAddToCart = () => {
+    if (!product) return;
+    let user = localStorage.getItem('user') || '';
+    if (user === '') {
+      navigate('/login');
+      return;
+    }
+    const userInfo: IUserData = JSON.parse(user);
+    if (id) {
+      const data: ICart = { userId: userInfo._id, productId: id };
+      dispatch(addProductToCart(data));
+    }
+  };
+
+  useEffect(() => {
+    dispatch(fetchData());
+  }, [dispatch, fetchData]);
 
   if (!product)
     return (
@@ -101,6 +122,7 @@ const Details = () => {
                 <Col span={24} className="mt-24">
                   <Button
                     type="primary"
+                    onClick={() => handleAddToCart()}
                     className="!rounded-lg bg-blue-500 flex justify-center items-center"
                   >
                     <ShoppingCartOutlined />
